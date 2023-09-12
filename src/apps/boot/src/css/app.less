@@ -1,0 +1,44 @@
+@import "../../../../precepts/fonts.css";
+@import "../../../../precepts/overlay";
+
+#app {
+  height: 100vh;
+
+  overflow: hidden;
+
+  background: black;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  > .logo {
+    //
+  }
+
+  > .loading-bar-container {
+    width: 150px;
+    height: 8px;
+
+    > .loading-bar {
+      background: white;
+
+      border-radius: 5px;
+
+      width: 10%;
+      height: 100%;
+    }
+  }
+
+  footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 50px;
+
+    color: white;
+    text-align: center;
+    font-size: 14px;
+  }
+}

@@ -1,9 +1,7 @@
 const TL = gsap.timeline({ paused: false }),
       LOCK_SCREEN = document.querySelector(".lock-screen");
 
-$UserConfig.getUserLockScreenWallpaper("1").then(data => {
-  console.log("DATA =", data);
-});
+$UserConfig.getUserLockScreenWallpaper("dev");
 
 TL
   .to(LOCK_SCREEN, {

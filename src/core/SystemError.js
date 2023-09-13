@@ -16,6 +16,7 @@ class SystemError {
   #messages = {
     101: "Given user code does not longer exist.",
     102: "Given user session is corrupted.",
+    103: "Given internal app name does not longer exist.",
   };
 
   /**

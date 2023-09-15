@@ -17,6 +17,10 @@ TL
     opacity: 0,
   })
   .add(() => {
-    $InternalApps.openApp("lock");
+    const LOCK_APP_OPENING = $InternalApps.openApp("_lock");
+
+    if ($AftOSCore.isSystemError(LOCK_APP_OPENING)) {
+      console.log(LOCK_APP_OPENING);
+    }
   })
   .play();

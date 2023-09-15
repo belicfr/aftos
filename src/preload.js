@@ -11,7 +11,8 @@ const INTERNAL_APP_API = {
    * Open an internal application.
    *
    * @param appName
-   * @returns {SystemError} If application can't be opened
+   * @returns {SystemError} If internal app does not longer exist:
+   *                        a SystemError instance
    */
   openApp(appName) {
     const APP_PATH = INTERNAL_APP_API.getAppPathByName(appName);
@@ -34,6 +35,10 @@ const INTERNAL_APP_API = {
   },
 };
 
+console.info("AVANT");
+INTERNAL_APP_API.openApp("_lock");
+console.info("APRÈS");
+
 /** User configuration API. */
 const USER_CONFIG_API = {
   /**
@@ -54,13 +59,28 @@ const USER_CONFIG_API = {
   },
 };
 
+/** AftOS core API. */
 const AFTOS_CORE_API = {
+  /**
+   * Check if host device has an AftOS correct installation.
+   */
   checkAftOSInstallation() {
     Device.getUserDataPath()
         .then(data => {
           let device = new Device(data);
           device.checkAftOSInstallation();
         });
+  },
+
+  /**
+   * Returns if given object is a SystemError instance.
+   *
+   * @param object Object to check
+   * @returns {boolean} If it is a SystemError instance
+   * @see SystemError
+   */
+  isSystemError(object) {
+    return object instanceof SystemError;
   },
 };
 

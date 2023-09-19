@@ -4,6 +4,12 @@
   padding: 0;
   box-sizing: border-box;
 }
+*:not(.select) {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 #app {
   height: 100vh;
   overflow: hidden;
@@ -22,6 +28,15 @@
   border-radius: 5px;
   width: 10%;
   height: 100%;
+}
+#app > .error-message {
+  text-align: center;
+  font-size: 13px;
+  color: white;
+}
+#app > .error-message > p.error-reference {
+  font-weight: bold;
+  margin-top: 10px;
 }
 #app footer {
   position: absolute;

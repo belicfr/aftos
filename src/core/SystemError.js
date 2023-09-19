@@ -6,18 +6,35 @@
  * @author belicfr
  */
 class SystemError {
+  /** Messages list linked to error codes. */
+  static #messages = {
+    101: "Given user code does not longer exist.",
+    102: "Given user session is corrupted.",
+    103: "Given internal app name does not longer exist.",
+  };
+
+  /** Error pages list linked to error references. */
+  static #references = {
+    "LOCK_INTERNAL:103": "error-lock-opening.html",
+    "INSTALLER_INTERNAL:103": "error-installer-opening.html",
+  };
+
+  /**
+   * Returns the error page filename linked with given reference.
+   *
+   * @param reference
+   * @returns {string} Error page filename (relative path from
+   *                   errors-manager internal app)
+   */
+  static getErrorPage(reference) {
+    return SystemError.#references[reference];
+  };
+
   /** Error code. */
   #code;
 
   /** Error trigger location. */
   #location;
-
-  /** Messages list linked to error codes. */
-  #messages = {
-    101: "Given user code does not longer exist.",
-    102: "Given user session is corrupted.",
-    103: "Given internal app name does not longer exist.",
-  };
 
   /**
    * @param code Error code
@@ -39,7 +56,7 @@ class SystemError {
    * @returns {string} Error message
    */
   getMessage() {
-    const MESSAGE = this.#messages[this.#code];
+    const MESSAGE = SystemError.#messages[this.#code];
 
     return MESSAGE === undefined
       ? MESSAGE

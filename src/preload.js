@@ -11,7 +11,7 @@ const INTERNAL_APP_API = {
    * Open an internal application.
    *
    * @param appName
-   * @returns {SystemError} If internal app does not longer exist:
+   * @returns {SystemError} If internal app does no longer exist:
    *                        a SystemError instance
    */
   openApp(appName) {
@@ -24,6 +24,18 @@ const INTERNAL_APP_API = {
     window.location = path.join(APP_PATH, "app.html");
   },
 
+  openError(reference) {
+    const ERROR_PAGE_PATH = INTERNAL_APP_API.getAppPathByName("errors-manager");
+
+    if (!fs.existsSync(ERROR_PAGE_PATH)) {
+      console.error("FATAL: ErrorsManager does no longer exist! Critical error.\nREFERENCE: ERRORS_MANAGER_INTERNAL:103");
+
+      return;
+    }
+
+    window.location = path.join(ERROR_PAGE_PATH, SystemError.getErrorPage(reference));
+  },
+
   /**
    * Returns application path with its name.
    *
@@ -34,10 +46,6 @@ const INTERNAL_APP_API = {
     return path.join(__dirname, "apps", appName);
   },
 };
-
-console.info("AVANT");
-INTERNAL_APP_API.openApp("_lock");
-console.info("APRÈS");
 
 /** User configuration API. */
 const USER_CONFIG_API = {
@@ -86,9 +94,9 @@ const AFTOS_CORE_API = {
 
 // EXPOSES ////////
 
-contextBridge.exposeInMainWorld("$InternalApps", INTERNAL_APP_API);
-contextBridge.exposeInMainWorld("$UserConfig", USER_CONFIG_API);
-contextBridge.exposeInMainWorld("$AftOSCore", AFTOS_CORE_API);
+window.$InternalApps = INTERNAL_APP_API;
+window.$UserConfig = USER_CONFIG_API;
+window.$AftOSCore = AFTOS_CORE_API;
 
 // INTERNALS //////
 
@@ -151,7 +159,12 @@ class Device {
    */
   checkAftOSInstallation() {
     if (!fs.existsSync(this.getAftOSRootPath())) {
-      // TODO: redirect to installer!!
+      const OPEN_INSTALLER = INTERNAL_APP_API.openApp("installer"),
+            ERROR_REFERENCE = "INSTALLER_INTERNAL:103";
+
+      if (AFTOS_CORE_API.isSystemError(OPEN_INSTALLER)) {
+        INTERNAL_APP_API.openError(ERROR_REFERENCE);
+      }
     }
   }
 }

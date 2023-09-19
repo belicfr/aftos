@@ -3,6 +3,16 @@ const { contextBridge, ipcRenderer } = require("electron"),
         fs = require("fs"),
         SystemError = require("./core/SystemError");
 
+// PRIVATE ////////
+
+function stringToHtml(htmlString) {
+  let dom;
+  dom = new DOMParser();
+
+  return dom.parseFromString(htmlString, "text/html")
+    .querySelector("body > .window");
+}
+
 // APIs ///////////
 
 /** AftOS internal tools API. */
@@ -28,8 +38,8 @@ const INTERNAL_APP_API = {
     const ERROR_PAGE_PATH = INTERNAL_APP_API.getAppPathByName("errors-manager");
 
     if (!fs.existsSync(ERROR_PAGE_PATH)) {
-      console.error("FATAL: ErrorsManager does no longer exist! Critical error.\nREFERENCE: ERRORS_MANAGER_INTERNAL:103");
-
+      console.error("FATAL: ErrorsManager does no longer exist! Critical error.\n"
+                  + "REFERENCE: ERRORS_MANAGER_INTERNAL:103");
       return;
     }
 
@@ -92,11 +102,78 @@ const AFTOS_CORE_API = {
   },
 };
 
+/** Interface API. */
+const INTERFACE_API = {
+  createDefaultWindow(givenArgs) {
+
+    const DEFAULT_WINDOW_TEMPLATE_PATH
+      = path.join(__dirname, "components/windows/default.html");
+
+    const DEFAULT_WINDOW_TEMPLATE_STRING
+      = fs.readFileSync(DEFAULT_WINDOW_TEMPLATE_PATH, {encoding: "utf-8"});
+
+    const DEFAULT_ARGS = {
+      size: {width: 800, height: 600},
+      resizable: {x: false, y: false},
+      hasHeader: true,
+      isDraggable: true,
+    };
+
+    let defaultWindowTemplate;
+
+    let args;
+
+    defaultWindowTemplate = stringToHtml(DEFAULT_WINDOW_TEMPLATE_STRING);
+    args = { ...DEFAULT_ARGS, ...givenArgs };
+
+    // SIZE CSS ///////
+
+    defaultWindowTemplate.style.width = `${args.size.width}px`;
+    defaultWindowTemplate.style.height = `${args.size.height}px`;
+
+    // RESIZE CSS /////
+
+    if (args.resizable.x && args.resizable.y) {
+      defaultWindowTemplate.style.resize = "both";
+    } else if (args.resizable.x && !args.resizable.y) {
+      defaultWindowTemplate.style.resize = "horizontal";
+    } else if (!args.resizable.x && args.resizable.y) {
+      defaultWindowTemplate.style.resize = "vertical";
+    } else {
+      defaultWindowTemplate.style.resize = "none";
+    }
+
+    // HAS HEADER /////
+
+    if (!args.hasHeader) {
+      defaultWindowTemplate.querySelector(".window-header").remove();
+    }
+
+    // IS DRAGGABLE ///
+
+    if (args.isDraggable) {
+      $(() => {
+        let dragArguments = {};
+
+        if (args.hasHeader) {
+          dragArguments.handle = ".window-header";
+        }
+
+        $(defaultWindowTemplate).draggable(dragArguments);
+      });
+    }
+
+    return defaultWindowTemplate.outerHTML;
+
+  },
+};
+
 // EXPOSES ////////
 
 window.$InternalApps = INTERNAL_APP_API;
 window.$UserConfig = USER_CONFIG_API;
 window.$AftOSCore = AFTOS_CORE_API;
+window.$Interface = INTERFACE_API;
 
 // INTERNALS //////
 

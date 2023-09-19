@@ -10,8 +10,26 @@
   <!-- css -->
   <link rel="stylesheet" href="./src/css/app.css" />
 
+  <!-- modules -->
+  <script>
+    if (typeof module === 'object') {
+      window.module = module;
+      module = undefined;
+    }
+  </script>
+
+  <script src="../../external_modules/jquery/jquery.min.js"></script>
+  <script src="../../external_modules/jquery-ui/jquery-ui.js"></script>
+
+  <script>
+    if (window.module) {
+      module = window.module;
+    }
+  </script>
+
   <!-- js -->
   <script src="../../../node_modules/gsap/dist/gsap.min.js" defer></script>
+  <script src="./src/js/interface.js" defer></script>
 </head>
 <body class="font-roboto">
   <div id="app">

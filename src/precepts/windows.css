@@ -1,0 +1,14 @@
+.window-default {
+  border: 1px solid grey;
+  border-radius: 15px;
+  width: 800px;
+  height: 600px;
+}
+.window-default > .window-header {
+  padding: 10px;
+  background: #efefef;
+}
+.window-default > .window-body {
+  background: white;
+}
+/*# sourceMappingURL=windows.css.map */

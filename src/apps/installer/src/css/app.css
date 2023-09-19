@@ -10,8 +10,28 @@
   -ms-user-select: none;
   user-select: none;
 }
+.window-default {
+  border: 1px solid grey;
+  border-radius: 15px;
+  width: 800px;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.window-default > .window-header {
+  padding: 0 10px;
+  height: 40px;
+  background: #efefef;
+  flex: none;
+}
+.window-default > .window-body {
+  background: white;
+  flex: 1;
+}
 #app {
   height: 100vh;
   overflow: hidden;
+  background: blue;
 }
 /*# sourceMappingURL=app.css.map */

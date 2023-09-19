@@ -104,67 +104,9 @@ const AFTOS_CORE_API = {
 
 /** Interface API. */
 const INTERFACE_API = {
-  createDefaultWindow(givenArgs) {
-
-    const DEFAULT_WINDOW_TEMPLATE_PATH
-      = path.join(__dirname, "components/windows/default.html");
-
-    const DEFAULT_WINDOW_TEMPLATE_STRING
-      = fs.readFileSync(DEFAULT_WINDOW_TEMPLATE_PATH, {encoding: "utf-8"});
-
-    const DEFAULT_ARGS = {
-      size: {width: 800, height: 600},
-      resizable: {x: false, y: false},
-      hasHeader: true,
-      isDraggable: true,
-    };
-
-    let defaultWindowTemplate;
-
-    let args;
-
-    defaultWindowTemplate = stringToHtml(DEFAULT_WINDOW_TEMPLATE_STRING);
-    args = { ...DEFAULT_ARGS, ...givenArgs };
-
-    // SIZE CSS ///////
-
-    defaultWindowTemplate.style.width = `${args.size.width}px`;
-    defaultWindowTemplate.style.height = `${args.size.height}px`;
-
-    // RESIZE CSS /////
-
-    if (args.resizable.x && args.resizable.y) {
-      defaultWindowTemplate.style.resize = "both";
-    } else if (args.resizable.x && !args.resizable.y) {
-      defaultWindowTemplate.style.resize = "horizontal";
-    } else if (!args.resizable.x && args.resizable.y) {
-      defaultWindowTemplate.style.resize = "vertical";
-    } else {
-      defaultWindowTemplate.style.resize = "none";
-    }
-
-    // HAS HEADER /////
-
-    if (!args.hasHeader) {
-      defaultWindowTemplate.querySelector(".window-header").remove();
-    }
-
-    // IS DRAGGABLE ///
-
-    if (args.isDraggable) {
-      $(() => {
-        let dragArguments = {};
-
-        if (args.hasHeader) {
-          dragArguments.handle = ".window-header";
-        }
-
-        $(defaultWindowTemplate).draggable(dragArguments);
-      });
-    }
-
-    return defaultWindowTemplate.outerHTML;
-
+  createDefaultWindow(title, args = {}) {
+    let window = new Window(title, args);
+    return window.createDefaultWindow();
   },
 };
 
@@ -191,18 +133,18 @@ class Device {
    */
   static getUserDataPath() {
     return ipcRenderer.invoke("getDeviceUserDataPath");
-  }
+  };
 
   constructor(userDataPath) {
     this.#userDataPath = userDataPath;
-  }
+  };
 
   /**
    * @returns {string} AftOS root path
    */
   getAftOSRootPath() {
     return path.join(this.#userDataPath, "AftOS_Data/root");
-  }
+  };
 
   /**
    * @param userCode
@@ -215,7 +157,7 @@ class Device {
     return fs.existsSync(USER_PATH)
       ? USER_PATH
       : new SystemError(101);
-  }
+  };
 
   /**
    * @param userCode
@@ -228,7 +170,7 @@ class Device {
     return fs.existsSync(USER_SYSTEM_PATH)
       ? USER_SYSTEM_PATH
       : new SystemError(102);
-  }
+  };
 
   /**
    * Check if AftOS is installed.
@@ -243,5 +185,144 @@ class Device {
         INTERNAL_APP_API.openError(ERROR_REFERENCE);
       }
     }
-  }
+  };
+}
+
+/**
+ * AftOS UI window class.
+ * Allows to create windows with respect of AftOS UI rules.
+ *
+ * @author belicfr
+ */
+class Window {
+  /** Default arguments on Window instantiation. */
+  static #defaultArgs = {
+    size: {width: 800, height: 600},
+    resizable: {x: false, y: false},
+    hasHeader: true,
+    isDraggable: true,
+  };
+
+  /** Window title. */
+  #title;
+
+  /** Window arguments. */
+  #args;
+
+  /** Window DOM object. */
+  #window;
+
+  /**
+   * @param title Window title
+   * @param args Given window arguments
+   */
+  constructor(title = "New window", args = {}) {
+    this.#title = title;
+    this.#args = { ...Window.#defaultArgs, ...args };
+  };
+
+  /**
+   * @returns {Number} Window width
+   */
+  getWidth() {
+    return this.#args.size.width;
+  };
+
+  /**
+   * @returns {Number} Window height
+   */
+  getHeight() {
+    return this.#args.size.height;
+  };
+
+  /**
+   * @returns {boolean} If the window is resizable horizontally
+   */
+  isHorizontalResizable() {
+    return this.#args.resizable.x;
+  };
+
+  /**
+   * @returns {boolean} If the window is resizable vertically
+   */
+  isVerticalResizable() {
+    return this.#args.resizable.y;
+  };
+
+  /**
+   * @returns {boolean} If the window has a header
+   */
+  hasHeader() {
+    return this.#args.hasHeader;
+  };
+
+  /**
+   * @returns {boolean} If the window is draggable
+   */
+  isDraggable() {
+    return this.#args.isDraggable;
+  };
+
+  createDefaultWindow() {
+    const APP = document.querySelector("#app");
+
+    const DEFAULT_WINDOW_TEMPLATE_PATH
+      = path.join(__dirname, "components/windows/default.html");
+
+    const DEFAULT_WINDOW_TEMPLATE_STRING
+      = fs.readFileSync(DEFAULT_WINDOW_TEMPLATE_PATH, {encoding: "utf-8"});
+
+    let defaultWindowTemplate;
+    defaultWindowTemplate = stringToHtml(DEFAULT_WINDOW_TEMPLATE_STRING);
+
+    // SIZE CSS ///////
+
+    defaultWindowTemplate.style.width = `${this.#args.size.width}px`;
+    defaultWindowTemplate.style.height = `${this.#args.size.height}px`;
+
+    // RESIZE CSS /////
+
+    if (this.#args.resizable.x && this.#args.resizable.y) {
+      defaultWindowTemplate.style.resize = "both";
+    } else if (this.#args.resizable.x && !this.#args.resizable.y) {
+      defaultWindowTemplate.style.resize = "horizontal";
+    } else if (!this.#args.resizable.x && this.#args.resizable.y) {
+      defaultWindowTemplate.style.resize = "vertical";
+    } else {
+      defaultWindowTemplate.style.resize = "none";
+    }
+
+    // HAS HEADER /////
+
+    if (!this.#args.hasHeader) {
+      defaultWindowTemplate.querySelector(".window-header").remove();
+    }
+
+    // IS DRAGGABLE ///
+
+    if (this.#args.isDraggable) {
+      defaultWindowTemplate.classList.add("window-draggable");
+    }
+
+    this.enableDrag();
+
+    APP.innerHTML +=
+      this.#window = defaultWindowTemplate;
+
+    return defaultWindowTemplate.outerHTML;
+  };
+
+  enableDrag() {
+    $(() => {
+      let dragArguments = {};
+
+      if (this.#args.hasHeader) {
+        dragArguments.handle = ".window-header";
+      }
+
+      console.log(dragArguments);
+
+      $(this.#window).draggable(dragArguments);
+    });
+  };
 }

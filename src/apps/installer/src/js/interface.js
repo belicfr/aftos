@@ -1,6 +1,10 @@
 const APP = document.querySelector("#app");
 
-APP.innerHTML += window.$Interface.createDefaultWindow({
-  hasHeader: false,
-  isDraggable: true,
+window.$Interface.createDefaultWindow("Hello!");
+
+const DRAGGABLE_WINDOWS
+  = document.querySelectorAll(".window-draggable");
+
+DRAGGABLE_WINDOWS.forEach(window => {
+  window.$Interface.enableDrag(window, )
 });

@@ -304,25 +304,47 @@ class Window {
       defaultWindowTemplate.classList.add("window-draggable");
     }
 
-    this.enableDrag();
+    // WINDOW ADDING //
 
-    APP.innerHTML +=
-      this.#window = defaultWindowTemplate;
+    APP.append(defaultWindowTemplate);
 
-    return defaultWindowTemplate.outerHTML;
+    let currentWindow = $(".window:last-of-type");
+
+    let xPosition = window.innerWidth / 2
+      - currentWindow.width() / 2;
+
+    let yPosition = window.innerHeight / 2
+      - currentWindow.height() / 2;
+
+    currentWindow
+      .css("position", "fixed")
+      .css("left", `${xPosition}px`)
+      .css("top", `${yPosition}px`);
+
+    this.#window = defaultWindowTemplate;
+
+    // DRAG ENABLING //
+
+    if (this.#args.isDraggable) {
+      this.enableLastDraggableWindow();
+    }
+
+    return defaultWindowTemplate;
   };
 
-  enableDrag() {
+  /** Enable jQuery UI drag on last draggable window. */
+  enableLastDraggableWindow() {
     $(() => {
       let dragArguments = {};
+
+      let currentWindow = $(".window-draggable:last-of-type");
 
       if (this.#args.hasHeader) {
         dragArguments.handle = ".window-header";
       }
 
-      console.log(dragArguments);
-
-      $(this.#window).draggable(dragArguments);
+      currentWindow
+        .draggable(dragArguments);
     });
   };
 }

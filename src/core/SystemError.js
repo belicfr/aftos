@@ -8,9 +8,13 @@
 class SystemError {
   /** Messages list linked to error codes. */
   static #messages = {
+    // 1xx -> Internal OS error
     101: "Given user code does not longer exist.",
     102: "Given user session is corrupted.",
     103: "Given internal app name does not longer exist.",
+
+    // 2xx -> Windows manager error
+    201: "The windows can't be loaded: its content is undefined.",
   };
 
   /** Error pages list linked to error references. */

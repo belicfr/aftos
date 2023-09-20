@@ -104,8 +104,8 @@ const AFTOS_CORE_API = {
 
 /** Interface API. */
 const INTERFACE_API = {
-  createDefaultWindow(title, args = {}) {
-    let window = new Window(title, args);
+  createDefaultWindow(title, args = {}, contentPath = null) {
+    let window = new Window(title, args, contentPath);
     return window.createDefaultWindow();
   },
 };
@@ -375,6 +375,15 @@ class Window {
         internalAppRootPath = path.dirname(window.location.pathname),
         contentFilePath = path.join(internalAppRootPath, this.#contentPath);
 
-    console.log(this.#contentPath);
+    if (!fs.existsSync(contentFilePath)) {
+      console.error("TEMP: error, file not found", contentFilePath);
+      return;
+    }
+
+    let content = fs.readFileSync(contentFilePath, {encoding: "utf-8"});
+
+    createdWindow
+        .children(".window-body")
+        .html(content);
   };
 }

@@ -5,7 +5,7 @@ let args = {
   resizable: {x: false, y: false},
   isDraggable: false,
 };
-window.$Interface.createDefaultWindow("Hello!", args, "windows/setup/window.html");
+window.$Interface.createDefaultWindow("Hello!", args, "src/windows/setup/window.html");
 
 const DRAGGABLE_WINDOWS
   = document.querySelectorAll(".window-draggable");

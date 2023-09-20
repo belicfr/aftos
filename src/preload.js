@@ -212,13 +212,18 @@ class Window {
   /** Window DOM object. */
   #window;
 
+  /** Path to content HTML file. */
+  #contentPath;
+
   /**
    * @param title Window title
    * @param args Given window arguments
+   * @param contentPath Path to HTML content file
    */
-  constructor(title = "New window", args = {}) {
+  constructor(title = "New window", args = {}, contentPath = null) {
     this.#title = title;
     this.#args = { ...Window.#defaultArgs, ...args };
+    this.#contentPath = contentPath;
   };
 
   /**
@@ -263,6 +268,10 @@ class Window {
     return this.#args.isDraggable;
   };
 
+  /**
+   * Create and enable a window.
+   * @returns {Object} Created window DOM element
+   */
   createDefaultWindow() {
     const APP = document.querySelector("#app");
 
@@ -292,12 +301,6 @@ class Window {
       defaultWindowTemplate.style.resize = "none";
     }
 
-    // HAS HEADER /////
-
-    if (!this.#args.hasHeader) {
-      defaultWindowTemplate.querySelector(".window-header").remove();
-    }
-
     // IS DRAGGABLE ///
 
     if (this.#args.isDraggable) {
@@ -309,6 +312,21 @@ class Window {
     APP.append(defaultWindowTemplate);
 
     let currentWindow = $(".window:last-of-type");
+
+    // HAS HEADER /////
+
+    if (this.#args.hasHeader) {
+      let windowTitle
+        = currentWindow
+          .children(".window-header")
+          .children("p.window-title");
+
+      windowTitle.text(this.#title);
+    } else {
+      defaultWindowTemplate.querySelector(".window-header").remove();
+    }
+
+    // WINDOW POS /////
 
     let xPosition = window.innerWidth / 2
       - currentWindow.width() / 2;
@@ -322,6 +340,10 @@ class Window {
       .css("top", `${yPosition}px`);
 
     this.#window = defaultWindowTemplate;
+
+    // CONTENT ADDING /
+
+    this.addContent();
 
     // DRAG ENABLING //
 
@@ -346,5 +368,13 @@ class Window {
       currentWindow
         .draggable(dragArguments);
     });
+  };
+
+  addContent() {
+    let createdWindow = $(this.#window),
+        internalAppRootPath = path.dirname(window.location.pathname),
+        contentFilePath = path.join(internalAppRootPath, this.#contentPath);
+
+    console.log(this.#contentPath);
   };
 }

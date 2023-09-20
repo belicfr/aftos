@@ -25,6 +25,15 @@
   height: 40px;
   background: #efefef;
   flex: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.window-default > .window-header > p.window-title {
+  text-align: center;
+  font-size: 15px;
+  color: grey;
+  font-weight: 600;
 }
 .window-default > .window-body {
   background: white;

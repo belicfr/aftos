@@ -38,6 +38,7 @@
 .window-default > .window-body {
   background: white;
   flex: 1;
+  position: relative;
 }
 #app {
   height: 100vh;

@@ -108,6 +108,8 @@ const INTERFACE_API = {
     let window = new Window(title, args, contentPath);
     return window.createDefaultWindow();
   },
+
+  // TODO: get component path!!
 };
 
 // EXPOSES ////////
@@ -372,12 +374,11 @@ class Window {
 
   addContent() {
     let createdWindow = $(this.#window),
-        internalAppRootPath = path.dirname(window.location.pathname),
+        internalAppRootPath = path.dirname(decodeURIComponent(window.location.pathname)),
         contentFilePath = path.join(internalAppRootPath, this.#contentPath);
 
     if (!fs.existsSync(contentFilePath)) {
-      console.error("TEMP: error, file not found", contentFilePath);
-      return;
+      return new SystemError(201, `${this.#title} window content loading`);
     }
 
     let content = fs.readFileSync(contentFilePath, {encoding: "utf-8"});

@@ -1,0 +1,15 @@
+.content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.content > .os-icon {
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  margin-bottom: 30px;
+}
+/*# sourceMappingURL=window.css.map */

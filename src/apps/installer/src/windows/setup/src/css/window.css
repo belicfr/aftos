@@ -47,6 +47,11 @@
 }
 .content#aftos_storage_creation .os-progress-bar {
   width: 150px;
+  margin-bottom: 10px;
+}
+.content#aftos_storage_creation p.step-precision {
+  font-size: 13px;
+  font-weight: 500;
 }
 .content > .main {
   flex: 1;

@@ -34,6 +34,15 @@ button.os-button.button-blue {
 button.os-button.button-grey {
   background: #E6E6E6;
 }
+button.os-button:disabled {
+  -webkit-cursor: not-allowed;
+  -moz-cursor: not-allowed;
+  -ms-cursor: not-allowed;
+  -o-cursor: not-allowed;
+  -khtml-cursor: not-allowed;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 div.os-progress-bar {
   border: 1px solid #E6E6E6;
   border-radius: 99px;

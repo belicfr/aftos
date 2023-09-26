@@ -12,6 +12,7 @@ class SystemError {
     101: "Given user code does not longer exist.",
     102: "Given user session is corrupted.",
     103: "Given internal app name does not longer exist.",
+    104: "AftOS storage backup does not longer exist.",
 
     // 2xx -> Windows manager error
     201: "The windows can't be loaded: its content is undefined.",

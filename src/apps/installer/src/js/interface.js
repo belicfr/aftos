@@ -31,3 +31,36 @@ let args = {
 
 let installerWindow
   = $Interface.createDefaultWindow("Hello, AftOS!", args, SECTIONS[currentSectionIndex]);
+
+function aftosStorageCreation() {
+  const TL = gsap.timeline({ paused: false }),
+        PROGRESS_BAR = $("#aftos_storage_creation .os-progress-bar > .bar");
+
+  TL
+    .to(PROGRESS_BAR, {
+      duration: 2,
+      delay: 1,
+
+      width: "50%",
+
+      ease: Power2.easeInOut,
+    })
+    .add(() => {
+      $AftOSCore.createAftOSStorage();
+    })
+    .to(PROGRESS_BAR, {
+      duration: 1,
+      delay: 1,
+
+      width: "100%",
+
+      ease: Power3.easeInOut,
+    })
+    .add(() => {
+      const NEXT_BUTTON = $("button#next_section");
+      NEXT_BUTTON
+        .text("Next")
+        .removeAttr("disabled");
+    })
+    .play();
+}

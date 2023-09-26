@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require("electron"),
         path = require("path"),
         fs = require("fs"),
+        fse = require("fs-extra"),
         SystemError = require("./core/SystemError");
 
 // PRIVATE ////////
@@ -161,6 +162,27 @@ const AFTOS_CORE_API = {
    */
   isSystemError(object) {
     return object instanceof SystemError;
+  },
+
+  createAftOSStorage() {
+    Device.getUserDataPath()
+      .then(data => {
+        const AFTOS_STORAGE_ROOT_PATH = data,
+              AFTOS_STORAGE_BACKUP_PATH = path.join(__dirname, "backup/os-root"),
+              AFTOS_STORAGE_BACKUP = fs.readdirSync(AFTOS_STORAGE_BACKUP_PATH);
+
+        if (!fs.existsSync(AFTOS_STORAGE_BACKUP_PATH)) {
+          return new SystemError(104, "AftOS installer (AftOS storage creation step)");
+        }
+
+        let elementPath;
+
+        AFTOS_STORAGE_BACKUP.forEach(element => {
+          elementPath = path.join(AFTOS_STORAGE_BACKUP_PATH, element);
+          fse.copySync(elementPath, path.join(AFTOS_STORAGE_ROOT_PATH, element));
+          console.log(path.join(AFTOS_STORAGE_ROOT_PATH, element));
+        });
+      });
   },
 };
 

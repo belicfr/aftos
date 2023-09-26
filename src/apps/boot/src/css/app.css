@@ -31,6 +31,22 @@ button.os-button.button-blue {
   background: #0079ff;
   color: white;
 }
+button.os-button.button-grey {
+  background: #E6E6E6;
+}
+div.os-progress-bar {
+  border: 1px solid #E6E6E6;
+  border-radius: 99px;
+  height: 10px;
+  overflow: hidden;
+}
+div.os-progress-bar > .bar {
+  width: 8px;
+  height: 100%;
+  border: none;
+  border-radius: 99px;
+  background: #0079ff;
+}
 #app {
   height: 100vh;
   overflow: hidden;

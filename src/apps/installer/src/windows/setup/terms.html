@@ -1,20 +1,32 @@
 <link rel="stylesheet" href="./src/windows/setup/src/css/window.css" />
 
-<div class="content">
+<div class="content" id="terms">
   <div class="main">
-    Hello, World!
+    <div class="text">
+      <h1 class="section-title">
+        Terms of Use
+      </h1>
+
+      <p>
+        These terms must be read, understood and accepted by User. They may be edited at any time.
+      </p>
+    </div>
+
+    <div class="terms-container">
+      <div os-component="terms-of-use/component.html"></div>
+    </div>
   </div>
 
   <div class="buttons">
     <div class="left">
-      <button class="os-button button-blue" id="previous_section">
+      <button class="os-button button-grey" id="previous_section">
         Previous
       </button>
     </div>
 
     <div class="right">
       <button class="os-button button-blue" id="next_section">
-        Next
+        I have read, understood and accept the terms of use
       </button>
     </div>
   </div>

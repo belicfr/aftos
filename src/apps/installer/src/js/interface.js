@@ -2,21 +2,22 @@ const APP = document.querySelector("#app"),
       SECTIONS = [
         "src/windows/setup/hello-world.html",
         "src/windows/setup/terms.html",
+        "src/windows/setup/aftos-storage-creation.html",
       ];
 
 let currentSectionIndex = 0;
 
-$(document).on("click", "button#previous_section", () => {  console.log("prev attempt");
-  if (currentSectionIndex > 0) {  console.log("PREVIOUS SECTION!");
+$(document).on("click", "button#previous_section", () => {
+  if (currentSectionIndex > 0) {
     currentSectionIndex--;
     installerWindow.setContentPath(SECTIONS[currentSectionIndex]);
     installerWindow.addContent();
   }
 });
 
-$(document).on("click", "button#next_section", () => {  console.log("next attempt");
-  if (currentSectionIndex < SECTIONS.length) {  console.log("NEXT SECTION!");
-    currentSectionIndex++
+$(document).on("click", "button#next_section", () => {
+  if (currentSectionIndex < SECTIONS.length) {
+    currentSectionIndex++;
     installerWindow.setContentPath(SECTIONS[currentSectionIndex]);
     installerWindow.addContent();
   }

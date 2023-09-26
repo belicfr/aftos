@@ -382,6 +382,7 @@ class Window {
     // SIZE CSS ///////
 
     defaultWindowTemplate.style.width = `${this.#args.size.width}px`;
+
     defaultWindowTemplate.style.height = `${this.#args.size.height}px`;
 
     // RESIZE CSS /////

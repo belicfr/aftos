@@ -11,3 +11,31 @@
   -ms-user-select: none;
   user-select: none;
 }
+
+button.os-button {
+  border: none;
+  border-radius: 5px;
+
+  font-weight: 700;
+
+  padding: 5px 15px;
+
+  &:hover {
+    -webkit-cursor: pointer;
+    -moz-cursor: pointer;
+    -ms-cursor: pointer;
+    -o-cursor: pointer;
+    -khtml-cursor: pointer;
+    cursor: pointer;
+  }
+
+  &:active {
+    opacity: .8;
+  }
+
+  &.button-blue {
+    background: rgb(0, 121, 255);
+
+    color: white;
+  }
+}

@@ -10,6 +10,27 @@
   -ms-user-select: none;
   user-select: none;
 }
+button.os-button {
+  border: none;
+  border-radius: 5px;
+  font-weight: 700;
+  padding: 5px 15px;
+}
+button.os-button:hover {
+  -webkit-cursor: pointer;
+  -moz-cursor: pointer;
+  -ms-cursor: pointer;
+  -o-cursor: pointer;
+  -khtml-cursor: pointer;
+  cursor: pointer;
+}
+button.os-button:active {
+  opacity: 0.8;
+}
+button.os-button.button-blue {
+  background: #0079ff;
+  color: white;
+}
 #app {
   height: 100vh;
   overflow: hidden;

@@ -17,10 +17,10 @@ TL
     opacity: 0,
   })
   .add(() => {
-    const LOCK_APP_OPENING = window.$InternalApps.openApp("lock"),
+    const LOCK_APP_OPENING = $InternalApps.openApp("lock"),
           ERROR_REFERENCE = "LOCK_INTERNAL:103";
 
-    if (window.$AftOSCore.isSystemError(LOCK_APP_OPENING)) {
+    if ($AftOSCore.isSystemError(LOCK_APP_OPENING)) {
       $InternalApps.openError(ERROR_REFERENCE);
     }
   })

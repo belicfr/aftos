@@ -4,17 +4,54 @@
 
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
 
-  > .os-icon {
-    width: 150px;
-    height: 150px;
+  > .main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-    background: url("")
+    flex: 1;
 
-    border-radius: 999px;
+    > .os-version {
+      margin-bottom: 30px;
+    }
 
-    margin-bottom: 30px;
+    > h1.hello-world {
+      font-weight: 200;
+      font-size: 50px;
+
+      > span.aftos {
+        -webkit-background-clip: text;
+        -moz-background-clip: text;
+        background-clip: text;
+
+        background-image: linear-gradient(90deg, rgba(0,153,255,1) 0%, rgba(64,179,255,1) 45%, rgb(132, 202, 232) 100%);
+
+        color: transparent;
+        font-weight: 500;
+      }
+    }
+  }
+
+  > .buttons {
+    flex: none;
+
+    display: flex;
+    column-gap: 5px;
+
+    padding: 25px;
+
+    > .left,
+    > .right {
+      display: flex;
+      column-gap: 5px;
+
+      flex: 1;
+    }
+
+    .right {
+      justify-content: flex-end;
+    }
   }
 }

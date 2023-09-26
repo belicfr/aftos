@@ -15,6 +15,46 @@ function stringToHtml(htmlString) {
 
 // APIs ///////////
 
+/** Internal API: path management. */
+const PATH_API = {
+  PREFIXES: {
+    '@': path.join(__dirname),
+  },
+
+  HTML_ATTRIBUTES: [
+    "href",
+    "src",
+  ],
+
+  usePathPrefix(givenPath) {
+    for (let prefix in PATH_API.PREFIXES) {
+      givenPath = givenPath.replaceAll(prefix, PATH_API.PREFIXES[prefix]);
+    }
+
+    return givenPath;
+  },
+
+  loadPaths(html) {
+    let domParser = new DOMParser();
+    html = domParser.parseFromString(html, "text/html");
+
+    let elements = $(html).find("*[href], *[src]");
+
+    elements.each((elementIndex, element) => {
+      PATH_API.HTML_ATTRIBUTES.forEach(attribute => {
+        if (element.hasAttribute(attribute)) {
+          let elementAttribute = element.getAttribute(attribute);
+          element.setAttribute(attribute, PATH_API.usePathPrefix(elementAttribute));
+        }
+      });
+
+      return html.head.innerHTML + html.body.innerHTML;
+    });
+
+    return html;
+  },
+};
+
 /** AftOS internal tools API. */
 const INTERNAL_APP_API = {
   /**
@@ -65,14 +105,36 @@ const USER_CONFIG_API = {
    * @param userCode
    */
   getUserLockScreenWallpaper(userCode) {
-    Device.getUserDataPath()
+    return Device.getUserDataPath()
       .then(data => {
         let device = new Device(data);
 
-        const WALLPAPER_FOLDER_PATH
-          = path.join(device.getUserSystemPath(userCode), "");
+        console.log("TEST", device.getUserSystemPath(userCode))
 
-        console.log(fs.existsSync(path.join(WALLPAPER_FOLDER_PATH, )));
+        const WALLPAPER_FOLDER_PATH
+          = path.join(device.getUserSystemPath(userCode), "Wallpaper");
+
+        USER_CONFIG_API.getUserConfig(userCode)
+          .then(data => {
+            console.log("DATA", data);
+          });
+
+        return "";
+      });
+  },
+
+  getUserConfig(userCode) {
+    return Device.getUserDataPath()
+      .then(data => {
+        let device = new Device(data);
+
+        const CONFIG_FILE_PATH
+          = path.join(device.getUserSystemPath(userCode), "config.json");
+
+        const CONFIG_FILE_CONTENT
+          = fs.readFileSync(CONFIG_FILE_PATH, { encoding: "utf-8" });
+
+        return JSON.parse(CONFIG_FILE_CONTENT);
       });
   },
 };
@@ -106,18 +168,21 @@ const AFTOS_CORE_API = {
 const INTERFACE_API = {
   createDefaultWindow(title, args = {}, contentPath = null) {
     let window = new Window(title, args, contentPath);
-    return window.createDefaultWindow();
+    window.createDefaultWindow();
+    return window;
   },
 
-  // TODO: get component path!!
+  getComponent(name) {
+    const COMPONENT_PATH = path.join(__dirname, "components", name);
+  },
 };
 
 // EXPOSES ////////
 
-window.$InternalApps = INTERNAL_APP_API;
-window.$UserConfig = USER_CONFIG_API;
-window.$AftOSCore = AFTOS_CORE_API;
-window.$Interface = INTERFACE_API;
+$InternalApps = INTERNAL_APP_API;
+$UserConfig = USER_CONFIG_API;
+$AftOSCore = AFTOS_CORE_API;
+$Interface = INTERFACE_API;
 
 // INTERNALS //////
 
@@ -229,6 +294,20 @@ class Window {
   };
 
   /**
+   * @returns {string} Window title
+   */
+  getTitle() {
+    return this.#title;
+  };
+
+  /**
+   * @param newTitle New window title
+   */
+  setTitle(newTitle) {
+    this.#title = newTitle;
+  };
+
+  /**
    * @returns {Number} Window width
    */
   getWidth() {
@@ -268,6 +347,20 @@ class Window {
    */
   isDraggable() {
     return this.#args.isDraggable;
+  };
+
+  /**
+   * @returns {string} Window content file path
+   */
+  getContentPath() {
+    return this.#contentPath;
+  };
+
+  /**
+   * @param newContentPath Window new content file path
+   */
+  setContentPath(newContentPath) {
+    this.#contentPath = newContentPath;
   };
 
   /**
@@ -386,5 +479,26 @@ class Window {
     createdWindow
         .children(".window-body")
         .html(content);
+    
+    console.log(this.#contentPath);
+
+    this.loadComponents();
+  };
+
+  loadComponents() {
+    let createdWindow = $(this.#window),
+        componentTags = createdWindow.find("div[os-component]");
+
+    componentTags.each((componentCallerIndex, componentCaller) => {
+      let currentComponentFilename = $(componentCaller).attr("os-component"),
+          currentComponentPath = path.join(__dirname, "components", currentComponentFilename);
+
+      if (fs.existsSync(currentComponentPath)) {
+        $.get(currentComponentPath, (data, status) => {
+          data = PATH_API.loadPaths(data);
+          $(componentCaller).replaceWith(data.head.innerHTML + data.body.innerHTML);
+        });
+      }
+    });
   };
 }

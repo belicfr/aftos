@@ -1,0 +1,10 @@
+.os-version {
+  border: 5px white solid;
+  border-radius: 999px;
+  outline: 1px #ccc white;
+  box-shadow: 0 0 5px rgba(0 0 0 / 0.2);
+  background: url("../images/aftos-version-logo.png") center / cover no-repeat;
+  width: 150px;
+  height: 150px;
+}
+/*# sourceMappingURL=component.css.map */

@@ -3,13 +3,42 @@
   inset: 0;
   display: flex;
   flex-direction: column;
+}
+.content > .main {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex: 1;
 }
-.content > .os-icon {
-  width: 150px;
-  height: 150px;
-  border-radius: 999px;
+.content > .main > .os-version {
   margin-bottom: 30px;
+}
+.content > .main > h1.hello-world {
+  font-weight: 200;
+  font-size: 50px;
+}
+.content > .main > h1.hello-world > span.aftos {
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  background-image: linear-gradient(90deg, #0099ff 0%, #40b3ff 45%, #84cae8 100%);
+  color: transparent;
+  font-weight: 500;
+}
+.content > .buttons {
+  flex: none;
+  display: flex;
+  column-gap: 5px;
+  padding: 25px;
+}
+.content > .buttons > .left,
+.content > .buttons > .right {
+  display: flex;
+  column-gap: 5px;
+  flex: 1;
+}
+.content > .buttons .right {
+  justify-content: flex-end;
 }
 /*# sourceMappingURL=window.css.map */

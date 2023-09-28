@@ -1,6 +1,19 @@
-<div class="content" id="hello_world">
-  <div class="main centered">
-    {{errorMessage}}
+<div class="content" window-name="system-error">
+  <div class="main">
+    <div class="icon-side">
+      <div class="error-icon"></div>
+    </div>
+
+    <div class="text-side">
+      <p>
+        {{errorMessage}}
+      </p>
+
+      <div class="error-details">
+        Location: {{errorLocation}}
+        Code: {{errorCode}}
+      </div>
+    </div>
   </div>
 
   <div class="buttons">

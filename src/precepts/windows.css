@@ -28,4 +28,27 @@
   flex: 1;
   position: relative;
 }
+.window-default > .window-body > .content[window-name="system-error"] > .main {
+  display: flex;
+  column-gap: 20px;
+}
+.window-default > .window-body > .content[window-name="system-error"] > .main > .icon-side {
+  flex: none;
+  display: flex;
+  justify-content: center;
+}
+.window-default > .window-body > .content[window-name="system-error"] > .main > .icon-side > .error-icon {
+  width: 56px;
+  height: 56px;
+}
+.window-default > .window-body > .content[window-name="system-error"] > .main > .text-side {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+.window-default > .window-body > .content[window-name="system-error"] > .main > .text-side > .error-details {
+  font-size: 12px;
+  font-weight: 300;
+  margin-top: 30px;
+}
 /*# sourceMappingURL=windows.css.map */

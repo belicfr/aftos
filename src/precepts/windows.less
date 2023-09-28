@@ -39,5 +39,38 @@
     flex: 1;
 
     position: relative;
+
+    > .content[window-name="system-error"] {
+      > .main {
+        display: flex;
+        column-gap: 20px;
+
+        > .icon-side {
+          flex: none;
+
+          display: flex;
+          justify-content: center;
+
+          > .error-icon {
+            width: 56px;
+            height: 56px;
+          }
+        }
+
+        > .text-side {
+          flex: 1;
+
+          font-size: 14px;
+          font-weight: 500;
+
+          > .error-details {
+            font-size: 12px;
+            font-weight: 300;
+
+            margin-top: 30px;
+          }
+        }
+      }
+    }
   }
 }

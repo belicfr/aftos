@@ -190,7 +190,6 @@ const AFTOS_CORE_API = {
         AFTOS_STORAGE_BACKUP.forEach(element => {
           elementPath = path.join(AFTOS_STORAGE_BACKUP_PATH, element);
           fse.copySync(elementPath, path.join(AFTOS_STORAGE_ROOT_PATH, element));
-          console.log(path.join(AFTOS_STORAGE_ROOT_PATH, element));
         });
       });
   },
@@ -212,8 +211,8 @@ const AFTOS_CORE_API = {
 
 /** Interface API. */
 const INTERFACE_API = {
-  createDefaultWindow(title, args = {}, contentPath = null) {
-    let window = new Window(title, args, contentPath);
+  createDefaultWindow(title, args = {}, contentPath = null, props = {}) {
+    let window = new Window(title, args, contentPath, props);
     window.createDefaultWindow();
     return window;
   },
@@ -335,15 +334,20 @@ class Window {
   /** Path to content HTML file. */
   #contentPath;
 
+  /** Properties to use on window components. */
+  #props;
+
   /**
    * @param title Window title
    * @param args Given window arguments
    * @param contentPath Path to HTML content file
+   * @param props Properties to include on the window
    */
-  constructor(title = "New window", args = {}, contentPath = null) {
+  constructor(title = "New window", args = {}, contentPath = null, props = {}) {
     this.#title = title;
     this.#args = { ...Window.#defaultArgs, ...args };
     this.#contentPath = contentPath;
+    this.#props = props;
   };
 
   /**
@@ -414,6 +418,20 @@ class Window {
    */
   setContentPath(newContentPath) {
     this.#contentPath = newContentPath;
+  };
+
+  /**
+   * @returns {Object} Current window properties object
+   */
+  getProps() {
+    return this.#props;
+  };
+
+  /**
+   * @param props New window properties object
+   */
+  setProps(props = {}) {
+    this.#props = props;
   };
 
   /**
@@ -494,6 +512,10 @@ class Window {
 
     this.addContent();
 
+    // PROPS ADDING ///
+
+    this.updatePropsOnWindow();
+
     // DRAG ENABLING //
 
     if (this.#args.isDraggable) {
@@ -521,17 +543,14 @@ class Window {
 
   addContent() {
     let createdWindow = $(this.#window),
-        internalAppRootPath = path.dirname(decodeURIComponent(window.location.pathname)),  // TODO: does not use it and use absolute on all method calling!!
-        contentFilePath = path.join(internalAppRootPath, this.#contentPath);
+        contentFilePath = path.join(__dirname, this.#contentPath);
 
-    if (!fs.existsSync(contentFilePath)) {  console.log("error window component not exists");
-      return new SystemError(201, `${this.#title} window content loading`);
-      // TODO: openErrorWindow() !!
+    if (!fs.existsSync(contentFilePath)) {
+      let error = new SystemError(201, `${this.#title} window content loading`);
+      error.openErrorWindow();
     }
 
     let content = fs.readFileSync(contentFilePath, {encoding: "utf-8"});
-    console.log("content", contentFilePath, content);
-
     createdWindow
         .children(".window-body")
         .html(content);
@@ -569,6 +588,22 @@ class Window {
         });
       }
     });
+  };
+
+  updatePropsOnWindow() {
+    let prop,
+        windowHtml,
+        domParser;
+
+    windowHtml = this.#window.outerHTML;
+
+    for (let propKey in this.#props) {
+      prop = this.#props[propKey];
+
+      windowHtml = windowHtml.replaceAll(`{{${propKey}}}`, prop);
+    }
+
+    $(this.#window).html($(windowHtml).html());
   };
 }
 
@@ -638,7 +673,7 @@ class SystemError {
   getMessage() {
     const MESSAGE = SystemError.#messages[this.#code];
 
-    return MESSAGE === undefined
+    return MESSAGE !== undefined
       ? MESSAGE
       : "Unknown error";
   };
@@ -650,19 +685,32 @@ class SystemError {
     return this.#location;
   };
 
+  /**
+   * Open error instance window.
+   */
   openErrorWindow() {
-    const ERROR_WINDOW_COMPONENT_PATH = path.join(__dirname, "components/error/error-window.html"),
+    const ERROR_WINDOW_COMPONENT_PATH = "components/error/error-window.html",
           ERROR_WINDOW_ARGS = {
             hasHeader: true,
-            size: {width: 300, height: 400},
+            size: {width: 500, height: 300},
             resizable: {x: false, y: false},
             isDraggable: true,
+          },
+          ERROR_WINDOW_PROPS = {
+            errorMessage: this.getMessage(),
+            errorLocation: this.#location,
+            errorCode: this.#code,
           };
 
-    let errorWindow = new Window("AftOS error", ERROR_WINDOW_ARGS, ERROR_WINDOW_COMPONENT_PATH);
-    errorWindow.createDefaultWindow();
+    let errorWindow = new Window("AftOS error",
+                                 ERROR_WINDOW_ARGS,
+                                 ERROR_WINDOW_COMPONENT_PATH,
+                                 ERROR_WINDOW_PROPS);
 
-    console.log("ERROR_WINDOW", errorWindow);
+    $(errorWindow.createDefaultWindow())
+      .find(".error-icon")
+      .css("background",
+           `url('${path.join(__dirname, "components/error/src/images/error.png")}') center / cover no-repeat`);
   };
 
   /**

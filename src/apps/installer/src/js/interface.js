@@ -1,9 +1,9 @@
 const APP = document.querySelector("#app"),
       SECTIONS = [
-        "src/windows/setup/hello-world.html",
-        "src/windows/setup/terms.html",
-        "src/windows/setup/aftos-storage-creation.html",
-        "src/windows/setup/admin-session-creation.html",
+        "apps/installer/src/windows/setup/hello-world.html",
+        "apps/installer/src/windows/setup/terms.html",
+        "apps/installer/src/windows/setup/aftos-storage-creation.html",
+        "apps/installer/src/windows/setup/admin-session-creation.html",
       ];
 
 let currentSectionIndex = 0;
@@ -77,6 +77,10 @@ function aftosStorageCreation() {
       }
 
       TL
+        .add(() => {
+          STEP_PRECISION
+            .text("AftOS storage creation...");
+        })
         .to(PROGRESS_BAR, {
           duration: 2,
           delay: 1,

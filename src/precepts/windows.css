@@ -1,14 +1,31 @@
 .window-default {
-  border: 1px solid grey;
+  border: 1px solid #E6E6E6;
   border-radius: 15px;
   width: 800px;
   height: 600px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(0 0 0 / 0.2);
 }
 .window-default > .window-header {
-  padding: 10px;
+  padding: 0 10px;
+  height: 40px;
   background: #efefef;
+  flex: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.window-default > .window-header > p.window-title {
+  text-align: center;
+  font-size: 15px;
+  color: grey;
+  font-weight: 600;
 }
 .window-default > .window-body {
   background: white;
+  flex: 1;
+  position: relative;
 }
 /*# sourceMappingURL=windows.css.map */

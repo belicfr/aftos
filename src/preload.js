@@ -1,8 +1,7 @@
 const { contextBridge, ipcRenderer } = require("electron"),
         path = require("path"),
         fs = require("fs"),
-        fse = require("fs-extra"),
-        SystemError = require("./core/SystemError");
+        fse = require("fs-extra");
 
 // PRIVATE ////////
 
@@ -147,10 +146,21 @@ const AFTOS_CORE_API = {
    */
   checkAftOSInstallation() {
     Device.getUserDataPath()
-        .then(data => {
-          let device = new Device(data);
-          device.checkAftOSInstallation();
-        });
+      .then(data => {
+        let device = new Device(data);
+        device.checkAftOSInstallation();
+      });
+  },
+
+  /**
+   * @returns {Promise<boolean>} If AftOS is properly installed
+   */
+  isAftOSInstalled() {
+    return Device.getUserDataPath()
+      .then(data => {
+        let device = new Device(data);
+        return device.isAftOSInstalled();
+      });
   },
 
   /**
@@ -182,6 +192,20 @@ const AFTOS_CORE_API = {
           fse.copySync(elementPath, path.join(AFTOS_STORAGE_ROOT_PATH, element));
           console.log(path.join(AFTOS_STORAGE_ROOT_PATH, element));
         });
+      });
+  },
+
+  removeAftOSStorage() {
+    Device.getUserDataPath()
+      .then(data => {
+        const AFTOS_STORAGE_ROOT_PATH = data;
+
+        if (!fs.existsSync(AFTOS_STORAGE_ROOT_PATH)) {
+          let error = new SystemError(105, "AftOS installer (old AftOS storage deletion step)");
+          error.openErrorWindow();
+        } else {
+          fse.removeSync(AFTOS_STORAGE_ROOT_PATH);
+        }
       });
   },
 };
@@ -262,11 +286,18 @@ class Device {
   };
 
   /**
+   * @returns {boolean} If AftOS is properly installed
+   */
+  isAftOSInstalled() {
+    return fs.existsSync(this.getAftOSRootPath());
+  };
+
+  /**
    * Check if AftOS is installed.
    * If not: redirection to installer.
    */
   checkAftOSInstallation() {
-    if (!fs.existsSync(this.getAftOSRootPath())) {
+    if (!this.isAftOSInstalled()) {
       const OPEN_INSTALLER = INTERNAL_APP_API.openApp("installer"),
             ERROR_REFERENCE = "INSTALLER_INTERNAL:103";
 
@@ -490,38 +521,158 @@ class Window {
 
   addContent() {
     let createdWindow = $(this.#window),
-        internalAppRootPath = path.dirname(decodeURIComponent(window.location.pathname)),
+        internalAppRootPath = path.dirname(decodeURIComponent(window.location.pathname)),  // TODO: does not use it and use absolute on all method calling!!
         contentFilePath = path.join(internalAppRootPath, this.#contentPath);
 
-    if (!fs.existsSync(contentFilePath)) {
+    if (!fs.existsSync(contentFilePath)) {  console.log("error window component not exists");
       return new SystemError(201, `${this.#title} window content loading`);
+      // TODO: openErrorWindow() !!
     }
 
     let content = fs.readFileSync(contentFilePath, {encoding: "utf-8"});
+    console.log("content", contentFilePath, content);
 
     createdWindow
         .children(".window-body")
         .html(content);
     
-    console.log(this.#contentPath);
-
     this.loadComponents();
   };
 
   loadComponents() {
+    const REGEX_OS_DATA_ATTRIBUTE = RegExp("^os-data-([a-z]+)");
+
     let createdWindow = $(this.#window),
         componentTags = createdWindow.find("div[os-component]");
 
     componentTags.each((componentCallerIndex, componentCaller) => {
       let currentComponentFilename = $(componentCaller).attr("os-component"),
-          currentComponentPath = path.join(__dirname, "components", currentComponentFilename);
+          currentComponentPath = path.join(__dirname, "components", currentComponentFilename),
+          dataAttributes = componentCaller
+            .getAttributeNames()
+            .filter(attribute => REGEX_OS_DATA_ATTRIBUTE.test(attribute));
 
       if (fs.existsSync(currentComponentPath)) {
         $.get(currentComponentPath, (data, status) => {
           data = PATH_API.loadPaths(data);
+
+          dataAttributes.forEach(attribute => {
+            let attributeTagName = REGEX_OS_DATA_ATTRIBUTE.exec(attribute)[1];
+
+            data.documentElement.innerHTML = data
+              .documentElement
+              .innerHTML
+              .replaceAll(`{{${attributeTagName}}}`, $(componentCaller).attr(attribute));
+          });
+
           $(componentCaller).replaceWith(data.head.innerHTML + data.body.innerHTML);
         });
       }
     });
+  };
+}
+
+/**
+ * System Error class.
+ * Allows to generate and return AftOS errors without generic exceptions.
+ * It follows AftOS system message syntax and rules.
+ *
+ * @author belicfr
+ */
+class SystemError {
+  /** Messages list linked to error codes. */
+  static #messages = {
+    // 1xx -> Internal OS error
+    101: "Given user code does not longer exist.",
+    102: "Given user session is corrupted.",
+    103: "Given internal app name does not longer exist.",
+    104: "AftOS storage backup does not longer exist.",
+    105: "AftOS storage does not longer exist.",
+
+    // 2xx -> Windows manager error
+    201: "The windows can't be loaded: its content is undefined.",
+  };
+
+  /** Error pages list linked to error references. */
+  static #references = {
+    "LOCK_INTERNAL:103": "error-lock-opening.html",
+    "INSTALLER_INTERNAL:103": "error-installer-opening.html",
+  };
+
+  /**
+   * Returns the error page filename linked with given reference.
+   *
+   * @param reference
+   * @returns {string} Error page filename (relative path from
+   *                   errors-manager internal app)
+   */
+  static getErrorPage(reference) {
+    return SystemError.#references[reference];
+  };
+
+  /** Error code. */
+  #code;
+
+  /** Error trigger location. */
+  #location;
+
+  /**
+   * @param code Error code
+   * @param location Error custom location, by default: "Internal"
+   */
+  constructor(code, location = "Internal") {
+    this.#code = code;
+    this.#location = location;
+  };
+
+  /**
+   * @returns {number} Error code
+   */
+  getCode() {
+    return this.#code;
+  }
+
+  /**
+   * @returns {string} Error message
+   */
+  getMessage() {
+    const MESSAGE = SystemError.#messages[this.#code];
+
+    return MESSAGE === undefined
+      ? MESSAGE
+      : "Unknown error";
+  };
+
+  /**
+   * @returns {string} Error location
+   */
+  getLocation() {
+    return this.#location;
+  };
+
+  openErrorWindow() {
+    const ERROR_WINDOW_COMPONENT_PATH = path.join(__dirname, "components/error/error-window.html"),
+          ERROR_WINDOW_ARGS = {
+            hasHeader: true,
+            size: {width: 300, height: 400},
+            resizable: {x: false, y: false},
+            isDraggable: true,
+          };
+
+    let errorWindow = new Window("AftOS error", ERROR_WINDOW_ARGS, ERROR_WINDOW_COMPONENT_PATH);
+    errorWindow.createDefaultWindow();
+
+    console.log("ERROR_WINDOW", errorWindow);
+  };
+
+  /**
+   * Create and returns an error message that follows AftOS messages syntax
+   * and rules.
+   * @returns {string} Error detailed message
+   */
+  toString() {
+    return `AftOS Internal Error!
+            Message: ${this.getMessage()}
+            Location: ${this.#location}`;
   };
 }

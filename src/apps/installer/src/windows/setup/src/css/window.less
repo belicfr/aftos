@@ -37,15 +37,6 @@
 
       > .text {
         flex: none;
-
-        > h1.section-title {
-          margin-bottom: 10px;
-        }
-
-        > p {
-          font-size: 14px;
-          color: #6b6b6b;
-        }
       }
 
       > .terms-container {
@@ -92,6 +83,59 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+    }
+
+    h1.section-title {
+      margin-bottom: 10px;
+    }
+
+    p.section-description {
+      font-size: 14px;
+      color: #6b6b6b;
+
+      margin-bottom: 30px;
+    }
+
+    > .body {
+      display: flex;
+      column-gap: 20px;
+
+      > .form {
+        width: 33.3333334%;
+
+        flex: none;
+
+        input {
+          width: 100%;
+        }
+      }
+
+      > .right-side {
+        flex: 1;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        > .icon-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          row-gap: 10px;
+
+          > .session-icon {
+            width: 100px;
+            height: 100px;
+
+            background: url("../images/session-icon.png") center / cover no-repeat;
+          }
+
+          > p.description {
+            font-weight: 500;
+            font-size: 14px;
+          }
+        }
+      }
     }
   }
 

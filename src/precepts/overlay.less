@@ -76,3 +76,56 @@ div.os-progress-bar {
     background: @os-blue;
   }
 }
+
+form.os-form {
+  > .os-form-component:not(:last-child) {
+    margin-bottom: 20px;
+  }
+}
+
+label.os-label {
+  p {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  input.os-input {
+    border: solid 1px #E6E6E6;
+    border-radius: 5px;
+
+    background: #fff;
+
+    padding: 7px;
+
+    font-size: 12px;
+
+    &::placeholder {
+      font-weight: 500;
+      color: grey;
+    }
+  }
+}
+
+.os-warn {
+  padding: 5px;
+
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+
+  > .warn-icon {
+    width: 40px;
+    height: 40px;
+
+    background: url("../components/warning/src/images/icon.png") center / cover no-repeat;
+
+    flex: none;
+  }
+
+  > .warn-content {
+    flex: 1;
+
+    font-weight: 500;
+    font-size: 14px;
+  }
+}

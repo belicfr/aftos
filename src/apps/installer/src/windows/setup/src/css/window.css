@@ -27,13 +27,6 @@
 .content#terms > .main > .text {
   flex: none;
 }
-.content#terms > .main > .text > h1.section-title {
-  margin-bottom: 10px;
-}
-.content#terms > .main > .text > p {
-  font-size: 14px;
-  color: #6b6b6b;
-}
 .content#terms > .main > .terms-container {
   flex: 1;
   border: solid 1px grey;
@@ -63,6 +56,46 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.content > .main h1.section-title {
+  margin-bottom: 10px;
+}
+.content > .main p.section-description {
+  font-size: 14px;
+  color: #6b6b6b;
+  margin-bottom: 30px;
+}
+.content > .main > .body {
+  display: flex;
+  column-gap: 20px;
+}
+.content > .main > .body > .form {
+  width: 33.3333334%;
+  flex: none;
+}
+.content > .main > .body > .form input {
+  width: 100%;
+}
+.content > .main > .body > .right-side {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.content > .main > .body > .right-side > .icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 10px;
+}
+.content > .main > .body > .right-side > .icon-container > .session-icon {
+  width: 100px;
+  height: 100px;
+  background: url("../images/session-icon.png") center / cover no-repeat;
+}
+.content > .main > .body > .right-side > .icon-container > p.description {
+  font-weight: 500;
+  font-size: 14px;
 }
 .content > .buttons {
   flex: none;

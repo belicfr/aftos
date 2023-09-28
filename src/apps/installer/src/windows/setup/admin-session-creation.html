@@ -1,21 +1,22 @@
 <link rel="stylesheet" href="./src/windows/setup/src/css/window.css" />
-<script>
+<script defer>
   newSessionAnimation();
+  newSessionForm();
 </script>
 
 <div class="content" id="admin_session_creation">
-  <div class="main">
-    <h1 class="section-title">
-      Your first session!
-    </h1>
+  <form class="os-form" id="admin_session_creation_form">
+    <div class="main">
+      <h1 class="section-title">
+        Your first session!
+      </h1>
 
-    <p class="section-description">
-      Welcome to AftOS! To begin to use your system, you have to create your first session. This first session will be administrator by default.
-    </p>
+      <p class="section-description">
+        Welcome to AftOS! To begin to use your system, you have to create your first session. This first session will be administrator by default.
+      </p>
 
-    <div class="body">
-      <div class="form">
-        <form class="os-form" id="admin_session_creation_form">
+      <div class="body">
+        <div class="form">
           <div class="os-form-component">
             <label class="os-label" for="name">
               <p>
@@ -55,30 +56,30 @@
               <input class="os-input" type="password" name="password_confirmation" id="password_confirmation" required />
             </label>
           </div>
-        </form>
-      </div>
+        </div>
 
-      <div class="right-side">
-        <div class="icon-container" id="session_icon">
-          <div class="session-icon"></div>
+        <div class="right-side">
+          <div class="icon-container" id="session_icon">
+            <div class="session-icon"></div>
 
-          <p class="description">
-            Your first session, to manage AftOS!
-          </p>
+            <p class="description">
+              Your first session, to manage AftOS!
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="buttons">
-    <div class="left">
-      <!--  -->
-    </div>
+    <div class="buttons">
+      <div class="left">
+        <!--  -->
+      </div>
 
-    <div class="right">
-      <button class="os-button button-blue" id="next_section">
-        Create my session
-      </button>
+      <div class="right">
+        <button class="os-button button-blue" type="submit">
+          Create my session
+        </button>
+      </div>
     </div>
-  </div>
+  </form>
 </div>

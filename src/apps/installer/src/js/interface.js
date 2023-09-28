@@ -128,3 +128,12 @@ function newSessionAnimation() {
       stagger: .2,
     })
 }
+
+function newSessionForm() {
+  $("form#admin_session_creation_form")
+    .on("submit", e => {
+      e.preventDefault();
+
+      const DATA = $(e.currentTarget).serializeArray();
+    });
+}

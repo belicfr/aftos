@@ -724,3 +724,13 @@ class SystemError {
             Location: ${this.#location}`;
   };
 }
+
+/**
+ * Session class.
+ * Allows to create, manage and delete AftOS sessions.
+ *
+ * @author belicfr
+ */
+class Session {
+  //
+}

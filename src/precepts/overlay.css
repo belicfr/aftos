@@ -55,7 +55,7 @@ div.os-progress-bar > .bar {
   border-radius: 99px;
   background: #0079ff;
 }
-form.os-form > .os-form-component:not(:last-child) {
+form.os-form .os-form-component:not(:last-child) {
   margin-bottom: 20px;
 }
 label.os-label p {

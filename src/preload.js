@@ -3,7 +3,8 @@ const { contextBridge, ipcRenderer }
         path = require("path"),
         fs = require("fs"),
         fse = require("fs-extra"),
-        bcrypt = require("bcrypt");
+        bcrypt = require("bcrypt"),
+        si = require("systeminformation");
 
 // PRIVATE ////////
 
@@ -252,12 +253,50 @@ const INTERFACE_API = {
   },
 };
 
+const HOST_DEVICE_API = {
+  /**
+   * @returns {Promise<Systeminformation.BatteryData>} Horizontal battery object
+   */
+  getHorizontalBatteryIcon() {
+    return si.battery()
+        .then(data => {
+          if (data.hasBattery) {
+            return {
+              icon: `
+                <div class="os-battery-icon-container">
+                  <div class="primary-part">
+                    <div class="battery-level-progress" style="width: ${data.percent}%;"></div>
+                  </div>
+                  
+                  <div class="secondary-part"></div>
+                </div>
+              `,
+              level: `${data.percent}%`,
+            };
+          } else {
+            return HOST_DEVICE_API.getPluggedBatteryIcon();
+          }
+        });
+  },
+
+  /**
+   * @returns {{level: string, icon: string}} Plugged battery object
+   */
+  getPluggedBatteryIcon() {
+    return {
+      icon: "<i class='fa-solid fa-plug-circle-bolt'></i>",
+      level: "",
+    };
+  },
+};
+
 // EXPOSES ////////
 
 $InternalApps = INTERNAL_APP_API;
 $UserConfig = USER_CONFIG_API;
 $AftOSCore = AFTOS_CORE_API;
 $Interface = INTERFACE_API;
+$HostDevice = HOST_DEVICE_API;
 
 // INTERNALS //////
 

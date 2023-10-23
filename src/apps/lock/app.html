@@ -8,6 +8,7 @@
   <title>AftOS</title>
 
   <!-- css -->
+  <link rel="stylesheet" href="../../external_modules/fontawesome-free-6.4.2-web/css/all.min.css" />
   <link rel="stylesheet" href="./src/css/app.css" />
 
   <!-- js -->
@@ -17,11 +18,26 @@
 </head>
 <body class="font-roboto">
   <div id="app">
-    <div class="lock-screen" style="background: red;">
-      <!--
-       Top bar
-       Time
-       -->
+    <div class="lock-screen">
+      <div class="time">
+        <p>
+          12:00
+        </p>
+      </div>
+      
+      <div class="os-information">
+        <div class="battery">
+          <!--  -->
+        </div>
+
+        <div class="internet">
+          <i class="fa-solid fa-wifi"></i>
+
+          <span class="network-name">
+            WIFI HOME
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </body>

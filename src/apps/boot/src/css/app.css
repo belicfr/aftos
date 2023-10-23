@@ -96,6 +96,35 @@ label.os-label input.os-input::placeholder {
   font-weight: 500;
   font-size: 14px;
 }
+.os-battery-icon-container {
+  display: flex;
+  align-items: center;
+  height: 12px;
+}
+.os-battery-icon-container > .primary-part {
+  flex: 1;
+  width: 20px;
+  border: 1px solid white;
+  height: 100%;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  padding: 1px;
+}
+.os-battery-icon-container > .primary-part > .battery-level-progress {
+  height: 100%;
+  background: white;
+  border-radius: 1px;
+  width: 50%;
+}
+.os-battery-icon-container > .secondary-part {
+  flex: none;
+  width: 2px;
+  border: 1px solid white;
+  background: white;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  height: 50%;
+}
 #app {
   height: 100vh;
   overflow: hidden;

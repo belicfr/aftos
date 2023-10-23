@@ -8,7 +8,7 @@
   <form class="os-form" id="admin_session_creation_form">
     <div class="main">
       <h1 class="section-title">
-        Your first session!
+        Your first session
       </h1>
 
       <p class="section-description">
@@ -19,41 +19,51 @@
         <div class="form">
           <div class="os-form-component">
             <label class="os-label" for="name">
-              <p>
+              <p class="label-text">
                 Name:
               </p>
 
-              <input class="os-input" type="text" name="name" id="name" maxlength="25" placeholder="(max. 25 characters)" required />
+              <input class="os-input" type="text" name="name" id="name"
+                     maxlength="25" placeholder="(max. 25 characters)"
+                     required />
+
+              <p class="error-message"></p>
             </label>
           </div>
 
           <div class="os-form-component">
             <label class="os-label" for="name_code">
-              <p>
+              <p class="label-text">
                 Name code:
               </p>
 
               <input class="os-input" type="text" name="name_code" id="name_code" maxlength="10" placeholder="(max. 10 characters)" required />
+
+              <p class="error-message"></p>
             </label>
           </div>
 
           <div class="os-form-component">
             <label class="os-label" for="password">
-              <p>
+              <p class="label-text">
                 Password:
               </p>
 
               <input class="os-input" type="password" name="password" id="password" required />
+
+              <p class="error-message"></p>
             </label>
           </div>
 
           <div class="os-form-component">
             <label class="os-label" for="password_confirmation">
-              <p>
+              <p class="label-text">
                 Password confirmation:
               </p>
 
               <input class="os-input" type="password" name="password_confirmation" id="password_confirmation" required />
+
+              <p class="error-message"></p>
             </label>
           </div>
         </div>

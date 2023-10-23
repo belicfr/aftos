@@ -4,25 +4,42 @@ const APP = document.querySelector("#app"),
         "apps/installer/src/windows/setup/terms.html",
         "apps/installer/src/windows/setup/aftos-storage-creation.html",
         "apps/installer/src/windows/setup/admin-session-creation.html",
+        "apps/installer/src/windows/setup/final.html",
       ];
 
 let currentSectionIndex = 0;
 
-$(document).on("click", "button#previous_section", () => {
+function previousSection() {
   if (currentSectionIndex > 0) {
     currentSectionIndex--;
     installerWindow.setContentPath(SECTIONS[currentSectionIndex]);
     installerWindow.addContent();
   }
-});
+}
 
-$(document).on("click", "button#next_section", () => {
-  if (currentSectionIndex < SECTIONS.length) {
+function nextSection() {
+  if (currentSectionIndex < SECTIONS.length - 1) {
     currentSectionIndex++;
     installerWindow.setContentPath(SECTIONS[currentSectionIndex]);
     installerWindow.addContent();
   }
-});
+}
+
+function finishInstaller() {
+  $InternalApps.openApp("boot");
+}
+
+$(document).on("click",
+               "button#previous_section",
+               previousSection);
+
+$(document).on("click",
+               "button#next_section",
+               nextSection);
+
+$(document).on("click",
+               "button#finish_installer",
+               finishInstaller);
 
 let args = {
   hasHeader: false,
@@ -50,6 +67,9 @@ $AftOSCore.isAftOSInstalled()
 
 installerWindow.loadComponents();
 
+/**
+ * AftOS storage creation step.
+ */
 function aftosStorageCreation() {
   const TL = gsap.timeline({ paused: false }),
         PROGRESS_BAR = $("#aftos_storage_creation .os-progress-bar > .bar"),
@@ -112,6 +132,9 @@ function aftosStorageCreation() {
     });
 }
 
+/**
+ * New session form animations (logo translating, etc.).
+ */
 function newSessionAnimation() {
   const TL = gsap.timeline({ paused: false }),
         ICON_CONTAINER_ELEMENTS = $("#session_icon > *");
@@ -129,11 +152,48 @@ function newSessionAnimation() {
     })
 }
 
-function newSessionForm() {
-  $("form#admin_session_creation_form")
-    .on("submit", e => {
+/**
+ * New session form usage (onSubmit).
+ */
+function newSessionForm() {  console.log("listener created");
+  $(document)
+    .on("submit", "form#admin_session_creation_form", e => {
       e.preventDefault();
 
       const DATA = $(e.currentTarget).serializeArray();
+
+      removeFieldsErrors();
+
+      $UserConfig.createUser(DATA)
+        .then(data => {
+          if ($AftOSCore.isSystemError(data)) {
+            addErrorToField(data.getLocation(), data.getMessage());
+          } else {
+            nextSection();
+          }
+        });
+    });
+
+  isNewSessionFormListenerRegistered = true;
+}
+
+function addErrorToField(fieldName, errorMessage) {
+  $(`input[name="${fieldName}"]`)
+    .css("border-color", "red")
+    .parent("label")
+    .css("color", "red")
+    .children("p.error-message")
+    .text(errorMessage);
+}
+
+function removeFieldsErrors() {
+  $("input")
+    .each((_, input) => {
+      $(input)
+        .css("border-color", "")
+        .parent("label")
+        .css("color", "")
+        .children("p.error-message")
+        .text("");
     });
 }

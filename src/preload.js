@@ -1,7 +1,9 @@
-const { contextBridge, ipcRenderer } = require("electron"),
+const { contextBridge, ipcRenderer }
+          = require("electron"),
         path = require("path"),
         fs = require("fs"),
-        fse = require("fs-extra");
+        fse = require("fs-extra"),
+        bcrypt = require("bcrypt");
 
 // PRIVATE ////////
 
@@ -109,17 +111,35 @@ const USER_CONFIG_API = {
       .then(data => {
         let device = new Device(data);
 
-        console.log("TEST", device.getUserSystemPath(userCode))
+        const WALLPAPER_FOLDER_PATH
+          = path.join(device.getUserSystemPath(userCode),
+                      ".internal");
+
+        return USER_CONFIG_API.getUserConfig(userCode)
+          .then(data => {
+            return path.join(WALLPAPER_FOLDER_PATH, data.wallpapers.lockscreen);
+          });
+      });
+  },
+
+  /**
+   * Returns user desktop wallpaper.
+   *
+   * @param userCode
+   */
+  getUserDesktopWallpaper(userCode) {
+    return Device.getUserDataPath()
+      .then(data => {
+        let device = new Device(data);
 
         const WALLPAPER_FOLDER_PATH
-          = path.join(device.getUserSystemPath(userCode), "Wallpaper");
+          = path.join(device.getUserSystemPath(userCode),
+          ".internal");
 
-        USER_CONFIG_API.getUserConfig(userCode)
+        return USER_CONFIG_API.getUserConfig(userCode)
           .then(data => {
-            console.log("DATA", data);
+            return path.join(WALLPAPER_FOLDER_PATH, data.wallpapers.desktop);
           });
-
-        return "";
       });
   },
 
@@ -129,13 +149,23 @@ const USER_CONFIG_API = {
         let device = new Device(data);
 
         const CONFIG_FILE_PATH
-          = path.join(device.getUserSystemPath(userCode), "config.json");
+          = path.join(device.getUserSystemPath(userCode), "session.json");
 
         const CONFIG_FILE_CONTENT
           = fs.readFileSync(CONFIG_FILE_PATH, { encoding: "utf-8" });
 
         return JSON.parse(CONFIG_FILE_CONTENT);
       });
+  },
+
+  createUser(data) {
+    let name = data.find(field => field.name === "name").value,
+        nameCode = data.find(field => field.name === "name_code").value,
+        password = data.find(field => field.name === "password").value,
+        passwordConfirmation
+          = data.find(field => field.name === "password_confirmation").value;
+
+    return Session.createSession(name, nameCode, password, passwordConfirmation);
   },
 };
 
@@ -273,7 +303,8 @@ class Device {
 
   /**
    * @param userCode
-   * @returns {string|SystemError} If user is not corrupt: user system folder path ;
+   * @returns {string|SystemError} If user is not corrupt: user system
+   *                               folder path ;
    *                               else: SystemError object
    */
   getUserSystemPath(userCode) {
@@ -297,7 +328,8 @@ class Device {
    */
   checkAftOSInstallation() {
     if (!this.isAftOSInstalled()) {
-      const OPEN_INSTALLER = INTERNAL_APP_API.openApp("installer"),
+      const OPEN_INSTALLER = INTERNAL_APP_API
+          .openApp("installer"),
             ERROR_REFERENCE = "INSTALLER_INTERNAL:103";
 
       if (AFTOS_CORE_API.isSystemError(OPEN_INSTALLER)) {
@@ -626,6 +658,13 @@ class SystemError {
 
     // 2xx -> Windows manager error
     201: "The windows can't be loaded: its content is undefined.",
+
+    // 3xx -> Session error
+    301: "Session already exists.",
+    302: "Your passwords must be same.",
+    303: "Your password must be at least 8 characters long.",
+    304: "Your name must be in lower case, with no spaces. Special" +
+      " characters allowed are . _ and -.",
   };
 
   /** Error pages list linked to error references. */
@@ -732,5 +771,63 @@ class SystemError {
  * @author belicfr
  */
 class Session {
-  //
+  static #REGEX_NAME_CODE = /^([a-z0-9._-]{1,25})$/;
+
+  static createSession(name, nameCode, password, passwordConfirmation) {
+    return Device.getUserDataPath()
+      .then(data => {
+        let device = new Device(data);
+        let possibleSessionPath
+          = path.join(device.getAftOSRootPath(), nameCode);
+
+        /* Name code already used. */
+        if (fs.existsSync(possibleSessionPath)) {
+          return new SystemError(301, "name_code");
+        }
+
+        /* Name code syntax error. */
+        if (!Session.#REGEX_NAME_CODE.test(nameCode)) {
+          return new SystemError(304, "name_code");
+        }
+
+        /* Passwords don't match. */
+        if (password !== passwordConfirmation) {
+          return new SystemError(302, "password");
+        }
+
+        /* Password has less than 8 characters. */
+        if (password.length < 8) {
+          return new SystemError(303, "password");
+        }
+
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(password, salt, (err, hash) => {
+            fs.mkdirSync(possibleSessionPath);
+
+            let sessionData = JSON.stringify({
+              name,
+              hash,
+              wallpapers: {
+                lockscreen: "lock-wallpaper.png",
+                desktop: "wallpaper.png",
+              },
+            });
+
+            fs.writeFileSync(path.join(possibleSessionPath, "session.json"),
+              sessionData);
+
+            let sessionBackup = path.join(__dirname, "backup/os-session"),
+                sessionBackupContent = fs.readdirSync(sessionBackup);
+
+            sessionBackupContent
+              .forEach(element => {
+                fse.copySync(path.join(sessionBackup, element),
+                             path.join(possibleSessionPath, element));
+              });
+          });
+        });
+
+        return true;
+      });
+  }
 }

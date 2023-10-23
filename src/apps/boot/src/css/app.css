@@ -59,9 +59,14 @@ div.os-progress-bar > .bar {
 form.os-form .os-form-component:not(:last-child) {
   margin-bottom: 20px;
 }
-label.os-label p {
+label.os-label p.label-text {
   font-size: 13px;
   font-weight: 500;
+}
+label.os-label p.error-message {
+  font-size: 11px;
+  color: red;
+  font-weight: 700;
 }
 label.os-label input.os-input {
   border: solid 1px #E6E6E6;

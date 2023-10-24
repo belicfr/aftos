@@ -258,9 +258,8 @@ const HOST_DEVICE_API = {
    * @returns {Promise<Systeminformation.BatteryData>} Horizontal battery object
    */
   getHorizontalBatteryIcon() {
-    return si.battery()
+    return HOST_DEVICE_API.getBattery()
         .then(data => {
-          if (data.hasBattery) {
             return {
               icon: `
                 <div class="os-battery-icon-container">
@@ -273,9 +272,6 @@ const HOST_DEVICE_API = {
               `,
               level: `${data.percent}%`,
             };
-          } else {
-            return HOST_DEVICE_API.getPluggedBatteryIcon();
-          }
         });
   },
 
@@ -287,6 +283,25 @@ const HOST_DEVICE_API = {
       icon: "<i class='fa-solid fa-plug-circle-bolt'></i>",
       level: "",
     };
+  },
+
+  /**
+   * @returns {Promise<Systeminformation.BatteryData>} Battery object
+   */
+  getBattery() {
+    return si.battery()
+      .then(data => {
+        return data;
+      });
+  },
+
+  getCurrentWifi() {
+    return si.wifiConnections()
+      .then(data => {
+        return data.length
+          ? data[0]
+          : null;
+      });
   },
 };
 

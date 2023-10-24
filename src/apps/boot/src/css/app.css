@@ -99,22 +99,27 @@ label.os-label input.os-input::placeholder {
 .os-battery-icon-container {
   display: flex;
   align-items: center;
-  height: 12px;
+  height: 20px;
 }
 .os-battery-icon-container > .primary-part {
   flex: 1;
-  width: 20px;
+  width: 40px;
   border: 1px solid white;
+  border-radius: 5px;
   height: 100%;
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
   padding: 1px;
 }
 .os-battery-icon-container > .primary-part > .battery-level-progress {
   height: 100%;
   background: white;
-  border-radius: 1px;
+  border-radius: 3px;
   width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.os-battery-icon-container > .primary-part > .battery-level-progress > i {
+  font-size: 10px;
 }
 .os-battery-icon-container > .secondary-part {
   flex: none;

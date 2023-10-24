@@ -155,7 +155,7 @@ function newSessionAnimation() {
 /**
  * New session form usage (onSubmit).
  */
-function newSessionForm() {  console.log("listener created");
+function newSessionForm() {
   $(document)
     .on("submit", "form#admin_session_creation_form", e => {
       e.preventDefault();

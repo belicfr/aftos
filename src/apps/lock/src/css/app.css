@@ -99,22 +99,27 @@ label.os-label input.os-input::placeholder {
 .os-battery-icon-container {
   display: flex;
   align-items: center;
-  height: 12px;
+  height: 20px;
 }
 .os-battery-icon-container > .primary-part {
   flex: 1;
-  width: 20px;
+  width: 40px;
   border: 1px solid white;
+  border-radius: 5px;
   height: 100%;
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
   padding: 1px;
 }
 .os-battery-icon-container > .primary-part > .battery-level-progress {
   height: 100%;
   background: white;
-  border-radius: 1px;
+  border-radius: 3px;
   width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.os-battery-icon-container > .primary-part > .battery-level-progress > i {
+  font-size: 10px;
 }
 .os-battery-icon-container > .secondary-part {
   flex: none;
@@ -139,23 +144,29 @@ label.os-label input.os-input::placeholder {
   inset: 0;
   background: black;
   padding: 50px;
-  color: #5fa5ff;
+  color: white;
+  text-shadow: 0 0 5px rgba(0 0 0 / 0.1);
 }
-#app > .lock-screen > .time {
+#app > .lock-screen > #time {
   font-weight: 700;
   font-size: 7em;
 }
-#app > .lock-screen > .os-information {
+#app > .lock-screen > #os-information {
   display: flex;
   column-gap: 20px;
   align-items: center;
   padding: 0 20px;
 }
-#app > .lock-screen > .os-information > div {
+#app > .lock-screen > #os-information > div {
   display: flex;
+  column-gap: 5px;
+  align-items: center;
 }
-#app > .lock-screen > .os-information > div > span {
-  font-size: 12px;
+#app > .lock-screen > #os-information > div#battery > .os-battery-icon-container > div {
+  box-shadow: 0 0 5px rgba(0 0 0 / 0.1);
+}
+#app > .lock-screen > #os-information > div > span {
+  font-size: 13px;
   font-weight: 800;
   margin-left: 5px;
 }

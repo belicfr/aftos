@@ -142,19 +142,17 @@ label.os-label {
   display: flex;
   align-items: center;
 
-  height: 12px;
+  height: 20px;
 
   > .primary-part {
     flex: 1;
 
-    width: 20px;
+    width: 40px;
 
     border: 1px solid white;
+    border-radius: 5px;
 
     height: 100%;
-
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
 
     padding: 1px;
 
@@ -163,9 +161,17 @@ label.os-label {
 
       background: white;
 
-      border-radius: 1px;
+      border-radius: 3px;
 
       width: 50%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      > i {
+        font-size: 10px;
+      }
     }
   }
 

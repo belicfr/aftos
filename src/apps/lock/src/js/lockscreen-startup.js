@@ -1,5 +1,6 @@
 const TL = gsap.timeline({ paused: false }),
       LOCK_SCREEN = document.querySelector(".lock-screen"),
+      TIME_LABEL = document.querySelector("#time"),
       OS_BATTERY
         = document.querySelector("#battery"),
       WIFI_NETWORK_ICON
@@ -7,31 +8,36 @@ const TL = gsap.timeline({ paused: false }),
       WIFI_NETWORK_NAME
         = document.querySelector("#network_wifi > span.network-name");
 
-const INTERVAL_TIMEOUT = 1_000;
+const OS_INFORMATION_INTERVAL_TIMEOUT = 1_000,
+      TIME_INTERVAL_TIMEOUT = 100;
 
 LOCK_SCREEN
   .style
   .background = "url('src/images/wallpaper.png') center / cover no-repeat";
 
+setInterval(() => {
+  TIME_LABEL.innerText = $Time.getCurrentTime();
+}, TIME_INTERVAL_TIMEOUT);
+
 $HostDevice.getHorizontalBatteryIcon()
   .then(battery => {
-    OS_BATTERY.innerHTML = `${battery.icon}<span class="battery-level"></span>`;
-
-    const OS_BATTERY_PROGRESS
-        = document.querySelector("#battery .battery-level-progress"),
-          OS_BATTERY_LABEL
-        = document.querySelector("#battery span.battery-level");
-
     setInterval(() => {
       $HostDevice.getBattery()
         .then(data => {
-          OS_BATTERY_PROGRESS
-            .style
-            .width = `${data.percent}%`;
-
           if (data.hasBattery) {
             let batteryLevelProgressColor,
               batteryLevelProgressContent;
+
+            OS_BATTERY.innerHTML = `${battery.icon}<span class="battery-level"></span>`;
+
+            const OS_BATTERY_PROGRESS
+                    = document.querySelector("#battery .battery-level-progress"),
+                  OS_BATTERY_LABEL
+                    = document.querySelector("#battery span.battery-level");
+
+            OS_BATTERY_PROGRESS
+              .style
+              .width = `${data.percent}%`;
 
             if (data.acConnected) {
               batteryLevelProgressContent = `<i class="fa-solid fa-bolt"></i>`;
@@ -57,7 +63,7 @@ $HostDevice.getHorizontalBatteryIcon()
 
             OS_BATTERY_LABEL.innerText = `${data.percent}%`;
           } else {
-            return $HostDevice.getPluggedBatteryIcon();
+            OS_BATTERY.innerHTML = `<i class="fa-solid fa-plug-circle-bolt"></i>`;
           }
         });
 
@@ -71,7 +77,7 @@ $HostDevice.getHorizontalBatteryIcon()
             WIFI_NETWORK_NAME.innerText = "No connected";
           }
         });
-    }, INTERVAL_TIMEOUT);
+    }, OS_INFORMATION_INTERVAL_TIMEOUT);
   });
 
 TL

@@ -4,7 +4,8 @@ const { contextBridge, ipcRenderer }
         fs = require("fs"),
         fse = require("fs-extra"),
         bcrypt = require("bcrypt"),
-        si = require("systeminformation");
+        si = require("systeminformation"),
+        moment = require("moment");
 
 // PRIVATE ////////
 
@@ -253,6 +254,7 @@ const INTERFACE_API = {
   },
 };
 
+/** Host device API. */
 const HOST_DEVICE_API = {
   /**
    * @returns {Promise<Systeminformation.BatteryData>} Horizontal battery object
@@ -276,16 +278,6 @@ const HOST_DEVICE_API = {
   },
 
   /**
-   * @returns {{level: string, icon: string}} Plugged battery object
-   */
-  getPluggedBatteryIcon() {
-    return {
-      icon: "<i class='fa-solid fa-plug-circle-bolt'></i>",
-      level: "",
-    };
-  },
-
-  /**
    * @returns {Promise<Systeminformation.BatteryData>} Battery object
    */
   getBattery() {
@@ -305,6 +297,13 @@ const HOST_DEVICE_API = {
   },
 };
 
+/** Time API. */
+const TIME_API = {
+  getCurrentTime() {
+    return moment().format("HH:mm");
+  },
+};
+
 // EXPOSES ////////
 
 $InternalApps = INTERNAL_APP_API;
@@ -312,6 +311,7 @@ $UserConfig = USER_CONFIG_API;
 $AftOSCore = AFTOS_CORE_API;
 $Interface = INTERFACE_API;
 $HostDevice = HOST_DEVICE_API;
+$Time = TIME_API;
 
 // INTERNALS //////
 

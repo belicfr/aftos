@@ -19,6 +19,7 @@ const createWindow = () => {
     },
     resizable: false,
     fullscreen: true,
+    icon: path.join(__dirname, "icon.png"),
   });
 
   // and load the index.html of the app.

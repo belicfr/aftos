@@ -169,6 +169,13 @@ const USER_CONFIG_API = {
 
     return Session.createSession(name, nameCode, password, passwordConfirmation);
   },
+
+  attemptLogin(nameCode, password) {
+    Session.attemptLogin(nameCode, password)
+      .then(data => {
+        console.log("attempt login => ", data);
+      });
+  },
 };
 
 /** AftOS core API. */
@@ -758,7 +765,7 @@ class SystemError {
    */
   getCode() {
     return this.#code;
-  }
+  };
 
   /**
    * @returns {string} Error message
@@ -825,8 +832,18 @@ class SystemError {
  * @author belicfr
  */
 class Session {
+  /** Regular Expression for name code. */
   static #REGEX_NAME_CODE = /^([a-z0-9._-]{1,25})$/;
 
+  /**
+   * Attempt to create a new session with given information.
+   *
+   * @param name Display name
+   * @param nameCode Name code (unique)
+   * @param password Password
+   * @param passwordConfirmation Password confirmation
+   * @returns {Promise<string>}
+   */
   static createSession(name, nameCode, password, passwordConfirmation) {
     return Device.getUserDataPath()
       .then(data => {
@@ -883,5 +900,37 @@ class Session {
 
         return true;
       });
-  }
+  };
+
+  static attemptLogin(nameCode, password) {
+    return Device.getUserDataPath()
+      .then(data => {
+        const DEVICE = new Device(data),
+            SESSION_CONFIGURATION_FILE_PATH
+              = path.join(DEVICE.getUserPath(nameCode), "session.json");
+
+        if (fs.existsSync(SESSION_CONFIGURATION_FILE_PATH)) {
+          const SESSION_CONFIGURATION
+            = JSON.parse(fs.readFileSync(SESSION_CONFIGURATION_FILE_PATH, {encoding: "utf-8"}));
+
+          return bcrypt.compareSync(password, SESSION_CONFIGURATION.hash)
+            ? new Session(nameCode)
+            : false;  // TODO: return SystemError
+        } else {
+          console.error("Session does not longer exist.");
+          return false;  // TODO: error session does not exist.
+        }
+      });
+  };
+
+  /** Current session name code. */
+  #currentSessionNameCode;
+
+  constructor(nameCode) {
+    this.#currentSessionNameCode = nameCode;
+  };
+
+  getCurrentSessionNameCode() {
+    return this.#currentSessionNameCode;
+  };
 }

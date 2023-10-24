@@ -156,6 +156,7 @@ label.os-label input.os-input::placeholder {
   column-gap: 20px;
   align-items: center;
   padding: 0 20px;
+  margin-bottom: 50px;
 }
 #app > .lock-screen > #os-information > div {
   display: flex;
@@ -169,5 +170,24 @@ label.os-label input.os-input::placeholder {
   font-size: 13px;
   font-weight: 800;
   margin-left: 5px;
+}
+#app > .lock-screen > #widgets {
+  width: 350px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  overflow-y: auto;
+}
+#app > .lock-screen > #widgets > .widget {
+  border-radius: 20px;
+  height: 160px;
+  background: white;
+  box-shadow: 0 0 5px rgba(0 0 0 / 0.1);
+}
+#app > .lock-screen > #widgets > .widget.widget-1col {
+  grid-column: span 1 / span 1;
+}
+#app > .lock-screen > #widgets > .widget.widget-2col {
+  grid-column: span 2 / span 2;
 }
 /*# sourceMappingURL=app.css.map */

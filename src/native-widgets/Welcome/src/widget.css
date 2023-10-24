@@ -1,0 +1,7 @@
+.widget[widget-name="Welcome"] {
+  color: black;
+}
+.widget[widget-name="Welcome"] > h1 {
+  font-weight: 900;
+}
+/*# sourceMappingURL=widget.css.map */

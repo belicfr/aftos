@@ -1,6 +1,18 @@
 @import "../../../../precepts/fonts.css";
 @import "../../../../precepts/overlay";
 
+@keyframes otherSessionsOnLoad {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 #app {
   height: 100vh;
 
@@ -91,9 +103,17 @@
       }
     }
 
+    > #time,
+    > #os-information,
+    > #widgets {
+      position: relative;
+      z-index: 1;
+    }
+
     > .session-container {
       position: fixed;
       inset: 0;
+      z-index: 0;
 
       display: flex;
       flex-direction: column;
@@ -104,14 +124,7 @@
         width: 200px;
         height: 200px;
 
-        border: 5px white solid;
-        border-radius: 999px;
-
-        box-shadow: 0 0 5px rgba(0 0 0 / .2);
-
         margin-bottom: 50px;
-
-        background: url("https://avatars.githubusercontent.com/u/96206878?v=4") center / cover no-repeat;
       }
 
       > .session-display-name {
@@ -151,5 +164,61 @@
         }
       }
     }
+
+    > #other_sessions {
+      position: fixed;
+      right: 50px;
+      bottom: 50px;
+
+      height: 75px;
+
+      padding: 10px;
+
+      border: 1px solid rgba(0 0 0 / .1);
+      border-radius: 10px;
+
+      background-color: rgba(0 0 0 / .1);
+      backdrop-filter: blur(10px);
+
+      box-shadow: 0 0 10px rgba(0 0 0 / .1);
+
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      column-gap: 10px;
+
+      animation-name: otherSessionsOnLoad;
+      animation-duration: 1s;
+      animation-timing-function: ease-in-out;
+
+      > .session-picture {
+        flex: none;
+
+        width: 60px;
+        height: 60px;
+
+        border-width: 2px;
+
+        transition: all .1s;
+
+        &:hover {
+          transform: translateY(-5px);
+
+          cursor: pointer;
+        }
+
+        &:active {
+          opacity: .8;
+        }
+      }
+    }
   }
+}
+
+.session-picture {
+  border: 5px white solid;
+  border-radius: 999px;
+
+  box-shadow: 0 0 5px rgba(0 0 0 / .2);
+  background: url("https://avatars.githubusercontent.com/u/96206878?v=4") center / cover no-repeat;
 }

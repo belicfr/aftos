@@ -142,6 +142,16 @@ input.os-password-input {
   border-bottom-right-radius: 3px;
   height: 50%;
 }
+@keyframes otherSessionsOnLoad {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 #app {
   height: 100vh;
   overflow: hidden;
@@ -202,9 +212,16 @@ input.os-password-input {
 #app > .lock-screen > #widgets > .widget.widget-2col {
   grid-column: span 2 / span 2;
 }
+#app > .lock-screen > #time,
+#app > .lock-screen > #os-information,
+#app > .lock-screen > #widgets {
+  position: relative;
+  z-index: 1;
+}
 #app > .lock-screen > .session-container {
   position: fixed;
   inset: 0;
+  z-index: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -213,11 +230,7 @@ input.os-password-input {
 #app > .lock-screen > .session-container > .session-picture {
   width: 200px;
   height: 200px;
-  border: 5px white solid;
-  border-radius: 999px;
-  box-shadow: 0 0 5px rgba(0 0 0 / 0.2);
   margin-bottom: 50px;
-  background: url("https://avatars.githubusercontent.com/u/96206878?v=4") center / cover no-repeat;
 }
 #app > .lock-screen > .session-container > .session-display-name {
   font-weight: 700;
@@ -241,5 +254,44 @@ input.os-password-input {
 #app > .lock-screen > .session-container > .session-password-input > form .login-input > button:hover {
   cursor: pointer;
   background: #f3f3f3;
+}
+#app > .lock-screen > #other_sessions {
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+  height: 75px;
+  padding: 10px;
+  border: 1px solid rgba(0 0 0 / 0.1);
+  border-radius: 10px;
+  background-color: rgba(0 0 0 / 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 10px rgba(0 0 0 / 0.1);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  column-gap: 10px;
+  animation-name: otherSessionsOnLoad;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+}
+#app > .lock-screen > #other_sessions > .session-picture {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-width: 2px;
+  transition: all 0.1s;
+}
+#app > .lock-screen > #other_sessions > .session-picture:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+}
+#app > .lock-screen > #other_sessions > .session-picture:active {
+  opacity: 0.8;
+}
+.session-picture {
+  border: 5px white solid;
+  border-radius: 999px;
+  box-shadow: 0 0 5px rgba(0 0 0 / 0.2);
+  background: url("https://avatars.githubusercontent.com/u/96206878?v=4") center / cover no-repeat;
 }
 /*# sourceMappingURL=app.css.map */

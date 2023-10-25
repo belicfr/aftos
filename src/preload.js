@@ -893,6 +893,7 @@ class Session {
             let sessionData = JSON.stringify({
               name,
               hash,
+              picture: null,  // TODO: set default picture path
               wallpapers: {
                 lockscreen: "lock-wallpaper.png",
                 desktop: "wallpaper.png",

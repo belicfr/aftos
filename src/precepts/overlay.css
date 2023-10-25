@@ -9,6 +9,11 @@
   -ms-user-select: none;
   user-select: none;
 }
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
 button.os-button {
   border: none;
   border-radius: 5px;
@@ -77,6 +82,13 @@ label.os-label input.os-input {
 label.os-label input.os-input::placeholder {
   font-weight: 500;
   color: grey;
+}
+input.os-password-input {
+  border: none;
+  border-radius: 999px;
+  padding: 7px 15px;
+  color: grey;
+  font-size: 15px;
 }
 .os-warn {
   padding: 5px;

@@ -90,5 +90,66 @@
         }
       }
     }
+
+    > .session-container {
+      position: fixed;
+      inset: 0;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      > .session-picture {
+        width: 200px;
+        height: 200px;
+
+        border: 5px white solid;
+        border-radius: 999px;
+
+        box-shadow: 0 0 5px rgba(0 0 0 / .2);
+
+        margin-bottom: 50px;
+
+        background: url("https://avatars.githubusercontent.com/u/96206878?v=4") center / cover no-repeat;
+      }
+
+      > .session-display-name {
+        font-weight: 700;
+        font-size: 25px;
+
+        margin-bottom: 30px;
+      }
+
+      > .session-password-input {
+        > form {
+          .login-input {
+            display: flex;
+            column-gap: 5px;
+
+            > input {
+              flex: 1;
+            }
+
+            > button {
+              flex: none;
+
+              border: none;
+              border-radius: 999px;
+
+              width: 31px;
+
+              background: #fff;
+
+              &:hover {
+                cursor: pointer;
+
+                background: #f3f3f3;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

@@ -10,6 +10,11 @@
   -ms-user-select: none;
   user-select: none;
 }
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
 button.os-button {
   border: none;
   border-radius: 5px;
@@ -78,6 +83,13 @@ label.os-label input.os-input {
 label.os-label input.os-input::placeholder {
   font-weight: 500;
   color: grey;
+}
+input.os-password-input {
+  border: none;
+  border-radius: 999px;
+  padding: 7px 15px;
+  color: grey;
+  font-size: 15px;
 }
 .os-warn {
   padding: 5px;
@@ -189,5 +201,45 @@ label.os-label input.os-input::placeholder {
 }
 #app > .lock-screen > #widgets > .widget.widget-2col {
   grid-column: span 2 / span 2;
+}
+#app > .lock-screen > .session-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#app > .lock-screen > .session-container > .session-picture {
+  width: 200px;
+  height: 200px;
+  border: 5px white solid;
+  border-radius: 999px;
+  box-shadow: 0 0 5px rgba(0 0 0 / 0.2);
+  margin-bottom: 50px;
+  background: url("https://avatars.githubusercontent.com/u/96206878?v=4") center / cover no-repeat;
+}
+#app > .lock-screen > .session-container > .session-display-name {
+  font-weight: 700;
+  font-size: 25px;
+  margin-bottom: 30px;
+}
+#app > .lock-screen > .session-container > .session-password-input > form .login-input {
+  display: flex;
+  column-gap: 5px;
+}
+#app > .lock-screen > .session-container > .session-password-input > form .login-input > input {
+  flex: 1;
+}
+#app > .lock-screen > .session-container > .session-password-input > form .login-input > button {
+  flex: none;
+  border: none;
+  border-radius: 999px;
+  width: 31px;
+  background: #fff;
+}
+#app > .lock-screen > .session-container > .session-password-input > form .login-input > button:hover {
+  cursor: pointer;
+  background: #f3f3f3;
 }
 /*# sourceMappingURL=app.css.map */

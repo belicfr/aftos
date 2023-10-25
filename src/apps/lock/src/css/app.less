@@ -1,18 +1,6 @@
 @import "../../../../precepts/fonts.css";
 @import "../../../../precepts/overlay";
 
-@keyframes otherSessionsOnLoad {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
 #app {
   height: 100vh;
 
@@ -132,6 +120,8 @@
         font-size: 25px;
 
         margin-bottom: 30px;
+
+        text-shadow: 0 0 5px rgba(0 0 0 / .3);
       }
 
       > .session-password-input {
@@ -139,6 +129,11 @@
           .login-input {
             display: flex;
             column-gap: 5px;
+
+            > input,
+            > button {
+              box-shadow: 0 0 5px rgba(0 0 0 / .3);
+            }
 
             > input {
               flex: 1;
@@ -169,6 +164,7 @@
       position: fixed;
       right: 50px;
       bottom: 50px;
+      z-index: 2;
 
       height: 75px;
 
@@ -187,9 +183,9 @@
       align-items: center;
       column-gap: 10px;
 
-      animation-name: otherSessionsOnLoad;
-      animation-duration: 1s;
-      animation-timing-function: ease-in-out;
+      transform: translateY(50px);
+
+      opacity: 0;
 
       > .session-picture {
         flex: none;
@@ -209,6 +205,10 @@
 
         &:active {
           opacity: .8;
+        }
+
+        &.focused {
+          transform: translateY(-5px);
         }
       }
     }

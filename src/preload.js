@@ -114,12 +114,11 @@ const USER_CONFIG_API = {
         let device = new Device(data);
 
         const WALLPAPER_FOLDER_PATH
-          = path.join(device.getUserSystemPath(userCode),
-                      ".internal");
+          = device.getUserSystemPath(userCode);
 
         return USER_CONFIG_API.getUserConfig(userCode)
           .then(data => {
-            return path.join(WALLPAPER_FOLDER_PATH, data.wallpapers.lockscreen);
+            return path.join(WALLPAPER_FOLDER_PATH, data.wallpapers.lockscreen).replace(/\\/g, '/');
           });
       });
   },
@@ -135,12 +134,32 @@ const USER_CONFIG_API = {
         let device = new Device(data);
 
         const WALLPAPER_FOLDER_PATH
-          = path.join(device.getUserSystemPath(userCode),
-          ".internal");
+          = device.getUserSystemPath(userCode);
 
         return USER_CONFIG_API.getUserConfig(userCode)
           .then(data => {
-            return path.join(WALLPAPER_FOLDER_PATH, data.wallpapers.desktop);
+            return path.join(WALLPAPER_FOLDER_PATH, data.wallpapers.desktop).replace(/\\/g, '/');
+          });
+      });
+  },
+
+  /**
+   * Returns user session picture.
+   *
+   * @param userCode
+   * @returns {Promise<string>}
+   */
+  getUserPicture(userCode) {
+    return Device.getUserDataPath()
+      .then(data => {
+        let device = new Device(data);
+
+        const PICTURE_FOLDER_PATH
+          = device.getUserSystemPath(userCode);
+
+        return USER_CONFIG_API.getUserConfig(userCode)
+          .then(data => {
+            return path.join(PICTURE_FOLDER_PATH, data.picture).replace(/\\/g, '/');
           });
       });
   },
@@ -150,13 +169,19 @@ const USER_CONFIG_API = {
       .then(data => {
         let device = new Device(data);
 
+        console.log(device.getUserSystemPath(userCode))
+
         const CONFIG_FILE_PATH
-          = path.join(device.getUserSystemPath(userCode), "session.json");
+          = path.join(device.getUserSystemPath(userCode), ".$session.json");
 
-        const CONFIG_FILE_CONTENT
-          = fs.readFileSync(CONFIG_FILE_PATH, { encoding: "utf-8" });
+        if (fs.existsSync(CONFIG_FILE_PATH)) {
+          const CONFIG_FILE_CONTENT
+            = fs.readFileSync(CONFIG_FILE_PATH, { encoding: "utf-8" });
 
-        return JSON.parse(CONFIG_FILE_CONTENT);
+          return JSON.parse(CONFIG_FILE_CONTENT);
+        }
+
+        return new SystemError(106, `${userCode} configuration file opening attempt`);
       });
   },
 };
@@ -384,7 +409,7 @@ class Device {
    *                               else: SystemError object
    */
   getUserSystemPath(userCode) {
-    const USER_SYSTEM_PATH = path.join(this.getUserPath(userCode), "system");
+    const USER_SYSTEM_PATH = path.join(this.getUserPath(userCode), ".$internal");
 
     return fs.existsSync(USER_SYSTEM_PATH)
       ? USER_SYSTEM_PATH
@@ -731,6 +756,7 @@ class SystemError {
     103: "Given internal app name does not longer exist.",
     104: "AftOS storage backup does not longer exist.",
     105: "AftOS storage does not longer exist.",
+    106: "This session does not have any configuration file. Session corrupted.",
 
     // 2xx -> Windows manager error
     201: "The windows can't be loaded: its content is undefined.",
@@ -892,16 +918,16 @@ class Session {
 
             let sessionData = JSON.stringify({
               name,
-              hash,
-              picture: null,  // TODO: set default picture path
+              picture: "picture.png",
               wallpapers: {
                 lockscreen: "lock-wallpaper.png",
                 desktop: "wallpaper.png",
               },
             });
 
-            fs.writeFileSync(path.join(possibleSessionPath, "session.json"),
-              sessionData);
+            let sessionSensitive = JSON.stringify({
+              hash,
+            });
 
             let sessionBackup = path.join(__dirname, "backup/os-session"),
                 sessionBackupContent = fs.readdirSync(sessionBackup);
@@ -911,6 +937,9 @@ class Session {
                 fse.copySync(path.join(sessionBackup, element),
                              path.join(possibleSessionPath, element));
               });
+
+            fs.writeFileSync(path.join(possibleSessionPath, ".$internal", ".$session.json"), sessionData);
+            fs.writeFileSync(path.join(possibleSessionPath, ".$internal", ".$sensitive.json"), sessionSensitive);
           });
         });
 
@@ -922,14 +951,14 @@ class Session {
     return Device.getUserDataPath()
       .then(data => {
         const DEVICE = new Device(data),
-            SESSION_CONFIGURATION_FILE_PATH
-              = path.join(DEVICE.getUserPath(nameCode), "session.json");
+              SESSION_SENSITIVE_FILE_PATH
+                = path.join(DEVICE.getUserSystemPath(nameCode), ".$sensitive.json");
 
-        if (fs.existsSync(SESSION_CONFIGURATION_FILE_PATH)) {
-          const SESSION_CONFIGURATION
-            = JSON.parse(fs.readFileSync(SESSION_CONFIGURATION_FILE_PATH, {encoding: "utf-8"}));
+        if (fs.existsSync(SESSION_SENSITIVE_FILE_PATH)) {
+          const SESSION_SENSITIVE
+            = JSON.parse(fs.readFileSync(SESSION_SENSITIVE_FILE_PATH, {encoding: "utf-8"}));
 
-          return bcrypt.compareSync(password, SESSION_CONFIGURATION.hash)
+          return bcrypt.compareSync(password, SESSION_SENSITIVE.hash)
             ? new Session(nameCode)
             : false;  // TODO: return SystemError
         } else {

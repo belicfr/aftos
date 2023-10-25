@@ -12,6 +12,22 @@
   <link rel="stylesheet" href="./src/css/app.css" />
 
   <!-- js -->
+  <script>
+    if (typeof module === 'object') {
+      window.module = module;
+      module = undefined;
+    }
+  </script>
+
+  <script src="../../external_modules/jquery/jquery.min.js"></script>
+  <script src="../../external_modules/jquery-ui/jquery-ui.js"></script>
+
+  <script>
+    if (window.module) {
+      module = window.module;
+    }
+  </script>
+
   <script src="../../../node_modules/gsap/dist/gsap.min.js" defer></script>
   <script src="./src/js/installation-control.js" defer></script>
   <script src="./src/js/lockscreen-startup.js" defer></script>
@@ -19,6 +35,10 @@
 <body class="font-roboto">
   <div id="app">
     <div class="lock-screen">
+      <!--
+       TODO:
+        - set ui font color relative to wallpaper (brightness/color?).
+       -->
       <div id="time">
         <!--  -->
       </div>
@@ -46,31 +66,11 @@
       </div>
 
       <div class="session-container">
-        <div class="session-picture"></div>
-
-        <div class="session-display-name">
-          Unknown
-        </div>
-
-        <div class="session-password-input">
-          <form id="codename_login_form">
-            <div class="login-input">
-              <input class="os-password-input"
-                     type="password"
-                     name="session_password"
-                     id="session_password" />
-              
-              <button class="attempt-login" type="button">
-                <i class="fa-solid fa-angle-right"></i>
-              </button>
-            </div>
-          </form>
-        </div>
+        <!--  -->
       </div>
 
       <div id="other_sessions">
-        <div class="session-picture"></div>
-        <div class="session-picture"></div>
+        <div class="session-picture" session-name-code="belic"></div>
       </div>
     </div>
   </div>

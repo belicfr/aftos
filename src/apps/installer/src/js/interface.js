@@ -164,7 +164,7 @@ function newSessionForm() {
 
       removeFieldsErrors();
 
-      $UserConfig.createUser(DATA)
+      $Session.createUser(DATA)
         .then(data => {
           if ($AftOSCore.isSystemError(data)) {
             addErrorToField(data.getLocation(), data.getMessage());

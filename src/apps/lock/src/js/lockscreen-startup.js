@@ -15,7 +15,10 @@ LOCK_SCREEN
   .style
   .background = "url('src/images/wallpaper.png') center / cover no-repeat";
 
-$UserConfig.attemptLogin("belic", "test");
+$Session.attemptLogin("belic", "azertyuiop")
+  .then(attempt => {
+    console.log("ATTEMPT => ", attempt);
+  });
 
 setInterval(() => {
   TIME_LABEL.innerText = $Time.getCurrentTime();

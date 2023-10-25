@@ -159,21 +159,39 @@ const USER_CONFIG_API = {
         return JSON.parse(CONFIG_FILE_CONTENT);
       });
   },
+};
 
+const SESSION_API = {
   createUser(data) {
     let name = data.find(field => field.name === "name").value,
-        nameCode = data.find(field => field.name === "name_code").value,
-        password = data.find(field => field.name === "password").value,
-        passwordConfirmation
-          = data.find(field => field.name === "password_confirmation").value;
+      nameCode = data.find(field => field.name === "name_code").value,
+      password = data.find(field => field.name === "password").value,
+      passwordConfirmation
+        = data.find(field => field.name === "password_confirmation").value;
 
     return Session.createSession(name, nameCode, password, passwordConfirmation);
   },
 
   attemptLogin(nameCode, password) {
-    Session.attemptLogin(nameCode, password)
-      .then(data => {
-        console.log("attempt login => ", data);
+    return Session.attemptLogin(nameCode, password)
+      .then(attempt => {
+        if (attempt) {
+          Device.getUserDataPath()
+            .then(data => {
+              let device = new Device(data),
+                currentSessionFilePath = path.join(device.getAftOSRootPath(),
+                  ".$current-session.json"),
+                currentSessionData = {
+                  nameCode,
+                };
+
+              fs.writeFileSync(currentSessionFilePath,
+                               JSON.stringify(currentSessionData),
+                               { encoding: "utf-8" });
+            });
+        }
+
+        return attempt;
       });
   },
 };
@@ -255,10 +273,6 @@ const INTERFACE_API = {
     window.createDefaultWindow();
     return window;
   },
-
-  getComponent(name) {
-    const COMPONENT_PATH = path.join(__dirname, "components", name);
-  },
 };
 
 /** Host device API. */
@@ -315,6 +329,7 @@ const TIME_API = {
 
 $InternalApps = INTERNAL_APP_API;
 $UserConfig = USER_CONFIG_API;
+$Session = SESSION_API;
 $AftOSCore = AFTOS_CORE_API;
 $Interface = INTERFACE_API;
 $HostDevice = HOST_DEVICE_API;

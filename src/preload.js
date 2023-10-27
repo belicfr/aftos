@@ -21,15 +21,29 @@ function stringToHtml(htmlString) {
 
 /** Internal API: path management. */
 const PATH_API = {
+  /** Prefixes to write short paths. */
   PREFIXES: {
     '@': path.join(__dirname),
   },
 
+  /** HTML attributes that uses prefixes. */
   HTML_ATTRIBUTES: [
     "href",
     "src",
   ],
 
+  /** RegEx for system element (.$). */
+  REGEX_SYSTEM_ELEMENT_PREFIX: /^\.\$(.*)$/,
+
+  /** RegEx for hidden element (.). */
+  REGEX_HIDDEN_ELEMENT_PREFIX: /^\.(.*)$/,
+
+  /**
+   * Returns path with prefix translation.
+   *
+   * @param givenPath
+   * @returns {*}
+   */
   usePathPrefix(givenPath) {
     for (let prefix in PATH_API.PREFIXES) {
       givenPath = givenPath.replaceAll(prefix, PATH_API.PREFIXES[prefix]);
@@ -38,6 +52,12 @@ const PATH_API = {
     return givenPath;
   },
 
+  /**
+   * Open given HTML file path and returns its content.
+   *
+   * @param html HTML path to open
+   * @returns {*}
+   */
   loadPaths(html) {
     let domParser = new DOMParser();
     html = domParser.parseFromString(html, "text/html");
@@ -56,6 +76,46 @@ const PATH_API = {
     });
 
     return html;
+  },
+
+  /**
+   * @param elementName
+   * @returns {boolean} If given file is a system one
+   */
+  isSystemElement(elementName) {
+    console.log(elementName, PATH_API.REGEX_SYSTEM_ELEMENT_PREFIX, PATH_API.REGEX_SYSTEM_ELEMENT_PREFIX.test(elementName));
+    return PATH_API.REGEX_SYSTEM_ELEMENT_PREFIX.test(elementName);
+  },
+
+  /**
+   * @param elementName
+   * @returns {boolean} If given file is hidden
+   */
+  isHiddenElement(elementName) {
+    return PATH_API.REGEX_HIDDEN_ELEMENT_PREFIX.test(elementName);
+  },
+
+  scandir(path, options) {
+    const DEFAULT_OPTIONS = {
+      hidden: false,
+      system: false,
+    };
+
+    options = {...DEFAULT_OPTIONS, ...options};
+
+    let elements = fs.readdirSync(path);
+
+    if (!options.system) {
+      elements
+        = elements.filter(element => !PATH_API.isSystemElement(element));
+    }
+
+    if (!options.hidden) {
+      elements
+        = elements.filter(element => !PATH_API.isHiddenElement(element));
+    }
+
+    return elements;
   },
 };
 
@@ -217,6 +277,16 @@ const SESSION_API = {
         }
 
         return attempt;
+      });
+  },
+
+  getAllSessions() {
+    return Device.getUserDataPath()
+      .then(data => {
+        const DEVICE = new Device(data),
+          ROOT_FOLDER = DEVICE.getAftOSRootPath();
+
+        return PATH_API.scandir(ROOT_FOLDER);
       });
   },
 };
@@ -766,7 +836,7 @@ class SystemError {
     302: "Your passwords must be same.",
     303: "Your password must be at least 8 characters long.",
     304: "Your name must be in lower case, with no spaces. Special" +
-      " characters allowed are . _ and -.",
+      " characters allowed are _ and -.",
   };
 
   /** Error pages list linked to error references. */
@@ -874,7 +944,7 @@ class SystemError {
  */
 class Session {
   /** Regular Expression for name code. */
-  static #REGEX_NAME_CODE = /^([a-z0-9._-]{1,25})$/;
+  static #REGEX_NAME_CODE = /^([a-z0-9_-]{1,25})$/;
 
   /**
    * Attempt to create a new session with given information.
@@ -947,6 +1017,13 @@ class Session {
       });
   };
 
+  /**
+   * Attempt to log in with given information.
+   *
+   * @param nameCode Session name code
+   * @param password Session password
+   * @returns {Promise<string>}
+   */
   static attemptLogin(nameCode, password) {
     return Device.getUserDataPath()
       .then(data => {

@@ -142,19 +142,22 @@ input.os-password-input {
   border-bottom-right-radius: 3px;
   height: 50%;
 }
+body {
+  background: black;
+}
 #app {
   height: 100vh;
   overflow: hidden;
-  background: black;
+  background: url("../images/wallpaper.png") center / cover no-repeat;
   position: relative;
-}
-#app > .lock-screen {
   display: none;
   opacity: 0;
   transform: scale(0.9);
+}
+#app > .lock-screen {
   position: fixed;
   inset: 0;
-  background: black;
+  background: transparent;
   padding: 50px;
   color: white;
   text-shadow: 0 0 5px rgba(0 0 0 / 0.1);
@@ -234,7 +237,7 @@ input.os-password-input {
 }
 #app > .lock-screen > .session-container > .session-password-input > form .login-input > input,
 #app > .lock-screen > .session-container > .session-password-input > form .login-input > button {
-  box-shadow: 0 0 5px rgba(0 0 0 / 0.3);
+  box-shadow: 0 0 5px rgba(0 0 0 / 0.1);
 }
 #app > .lock-screen > .session-container > .session-password-input > form .login-input > input {
   flex: 1;
@@ -290,6 +293,5 @@ input.os-password-input {
   border: 5px white solid;
   border-radius: 999px;
   box-shadow: 0 0 5px rgba(0 0 0 / 0.2);
-  background: url("https://avatars.githubusercontent.com/u/96206878?v=4") center / cover no-repeat;
 }
 /*# sourceMappingURL=app.css.map */

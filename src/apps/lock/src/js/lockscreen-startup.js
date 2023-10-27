@@ -1,4 +1,5 @@
 const TL = gsap.timeline({ paused: false }),
+      APP = document.querySelector("#app"),
       LOCK_SCREEN = document.querySelector(".lock-screen"),
       TIME_LABEL = document.querySelector("#time"),
       OS_BATTERY
@@ -14,13 +15,37 @@ const TL = gsap.timeline({ paused: false }),
 const OS_INFORMATION_INTERVAL_TIMEOUT = 1_000,
       TIME_INTERVAL_TIMEOUT = 100;
 
+/**
+ * Focus a session from #other_sessions.
+ * @param nameCode Session to focus name code
+ */
 function focusOnSession(nameCode) {
   $UserConfig.getUserConfig(nameCode)
     .then(data => {  console.log(data);
       $UserConfig.getUserPicture(nameCode)
         .then(picture => {
-          const CONTAINER_CONTENT = `
-            <div class="session-picture" style="background-image: url('${picture}')"></div>
+          const TL = gsap.timeline({paused: false}),
+                FOCUSED_SESSION_PICTURE = $(".session-picture.focused");
+
+          if (FOCUSED_SESSION_PICTURE.length) {
+            TL
+              .to(SESSION_CONTAINER, {
+                delay: 0,
+                duration: .5,
+
+                y: 50,
+                opacity: 0,
+
+                ease: Power2.easeInOut,
+              });
+          }
+
+          TL
+            .add(() => {
+              const CONTAINER_CONTENT = `
+            <div class="session-picture" 
+                 style="background: 
+                          url('${picture}') center / cover no-repeat;"></div>
         
             <div class="session-display-name">
               ${data.name}
@@ -40,18 +65,48 @@ function focusOnSession(nameCode) {
                 </div>
               </form>
             </div>`;
+              SESSION_CONTAINER.innerHTML = CONTAINER_CONTENT;
+            })
+            .to(SESSION_CONTAINER, {
+              delay: 0,
+              duration: .5,
 
-          SESSION_CONTAINER.innerHTML = CONTAINER_CONTENT;
+              y: 0,
+              opacity: 1,
+
+              ease: Power2.easeInOut,
+            })
+            .play();
         });
 
       $UserConfig.getUserLockScreenWallpaper(nameCode)
         .then(wallpaper => {
-          LOCK_SCREEN.style.backgroundImage = `url("${wallpaper}")`;
+          LOCK_SCREEN.style.background
+            = `url("${wallpaper}") center / cover no-repeat`;
         });
     });
 }
 
-$(document).on("click", "#other_sessions > .session-picture", e => {
+$Session.getAllSessions()
+  .then(sessions => {
+    sessions.forEach(nameCode => {
+      $UserConfig.getUserPicture(nameCode)
+        .then(picture => {
+          const SESSION_PICTURE = `
+            <div class="session-picture" 
+                 session-name-code="${nameCode}"
+                 style="background: 
+                          url('${picture}') center / cover no-repeat;"></div>
+          `;
+          OTHER_SESSIONS_CONTAINER.innerHTML += SESSION_PICTURE;
+        });
+    })
+  });
+
+$(document).on("click",
+               "#other_sessions > .session-picture:not(.focused)",
+               e => {
+
   const FOCUSED_SESSION_PICTURE = $("#other_sessions > .session-picture.focused"),
         SESSION_PICTURE = $(e.target),
         NAME_CODE = SESSION_PICTURE.attr("session-name-code");
@@ -60,11 +115,8 @@ $(document).on("click", "#other_sessions > .session-picture", e => {
   SESSION_PICTURE.addClass("focused");
 
   focusOnSession(NAME_CODE);
-});
 
-LOCK_SCREEN
-  .style
-  .background = "url('src/images/wallpaper.png') center / cover no-repeat";
+});
 
 setInterval(() => {
   TIME_LABEL.innerText = $Time.getCurrentTime();
@@ -132,13 +184,13 @@ $HostDevice.getHorizontalBatteryIcon()
   });
 
 TL
-  .to(LOCK_SCREEN, {
+  .to(APP, {
     delay: 1,
     duration: 0,
 
     display: "block",
   })
-  .to(LOCK_SCREEN, {
+  .to(APP, {
     delay: 0,
     duration: .75,
 

@@ -1,9 +1,11 @@
 {
+  "showOnLockscreen": true,
   "installed": [
     {
       "name": "Welcome",
       "isNative": true,
-      "source": "Welcome"
+      "source": "Welcome",
+      "size": "2col"
     }
   ]
 }

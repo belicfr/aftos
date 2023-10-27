@@ -8,9 +8,11 @@ const TL = gsap.timeline({ paused: false }),
         = document.querySelector("#network_wifi > i"),
       WIFI_NETWORK_NAME
         = document.querySelector("#network_wifi > span.network-name"),
-      SESSION_CONTAINER = document.querySelector(".session-container"),
+      SESSION_CONTAINER
+        = document.querySelector(".session-container"),
       OTHER_SESSIONS_CONTAINER
-        = document.querySelector("#other_sessions");
+        = document.querySelector("#other_sessions"),
+      WIDGETS = document.querySelector("#widgets");
 
 const OS_INFORMATION_INTERVAL_TIMEOUT = 1_000,
       TIME_INTERVAL_TIMEOUT = 100;
@@ -20,8 +22,10 @@ const OS_INFORMATION_INTERVAL_TIMEOUT = 1_000,
  * @param nameCode Session to focus name code
  */
 function focusOnSession(nameCode) {
+  const TL = gsap.timeline({paused: false});
+
   $UserConfig.getUserConfig(nameCode)
-    .then(data => {  console.log(data);
+    .then(data => {
       $UserConfig.getUserPicture(nameCode)
         .then(picture => {
           const TL = gsap.timeline({paused: false}),
@@ -85,6 +89,33 @@ function focusOnSession(nameCode) {
             = `url("${wallpaper}") center / cover no-repeat`;
         });
     });
+
+  if (WIDGETS.hasChildNodes()) {
+    TL
+      .to(WIDGETS, {
+        delay: 0,
+        duration: .5,
+
+        y: 50,
+        opacity: 0,
+      });
+  }
+
+  TL
+    .add(() => {
+      $UserConfig.getUserWidgets(nameCode)
+        .then(widgets => {
+          WIDGETS.innerHTML = widgets;
+        });
+    })
+    .to(WIDGETS, {
+      delay: 0,
+      duration: .5,
+
+      y: 0,
+      opacity: 1,
+    })
+    .play();
 }
 
 $Session.getAllSessions()

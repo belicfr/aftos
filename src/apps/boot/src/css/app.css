@@ -142,6 +142,26 @@ input.os-password-input {
   border-bottom-right-radius: 3px;
   height: 50%;
 }
+.os-widget {
+  border-radius: 20px;
+  height: 160px;
+  background: white;
+  box-shadow: 0 0 5px rgba(0 0 0 / 0.1);
+  transition: box-shadow 0.25s, transform 0.1s;
+}
+.os-widget:hover {
+  box-shadow: 0 0 10px rgba(0 0 0 / 0.1);
+  cursor: pointer;
+}
+.os-widget.editable:active {
+  transform: scale(0.95);
+}
+.os-widget.os-widget-1col {
+  grid-column: span 1 / span 1;
+}
+.os-widget.os-widget-2col {
+  grid-column: span 2 / span 2;
+}
 #app {
   height: 100vh;
   overflow: hidden;

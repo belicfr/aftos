@@ -1,7 +1,13 @@
-.widget[widget-name="Welcome"] {
+.os-widget[widget-name="Welcome"] {
   color: black;
+  padding: 20px;
 }
-.widget[widget-name="Welcome"] > h1 {
-  font-weight: 900;
+.os-widget[widget-name="Welcome"] > h1 {
+  font-weight: 700;
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+.os-widget[widget-name="Welcome"] > p {
+  font-size: 14px;
 }
 /*# sourceMappingURL=widget.css.map */

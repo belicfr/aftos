@@ -244,9 +244,48 @@ const USER_CONFIG_API = {
         return new SystemError(106, `${userCode} configuration file opening attempt`);
       });
   },
+
+  getUserWidgets(userCode) {
+    return Session.getSessionWidgets(userCode)
+      .then(widgets => {
+        console.log("INSTALLED WIDGETS => ", widgets);
+        let widgetsHTML = "";
+
+        widgets.forEach(widget => {
+          let widgetPath,
+              widgetHTML;
+
+          if (widget.isNative) {
+            widgetPath
+              = path.join(__dirname,
+                          "native-widgets",
+                          widget.source,
+                          `${widget.size}.html`);
+
+            widgetHTML
+              = PATH_API.loadPaths(
+                  fs.readFileSync(widgetPath, {encoding: "utf-8"})
+              ).documentElement.innerHTML;
+          } else {
+            // TODO: set widget path for non native widgets.
+          }
+
+          widgetsHTML += widgetHTML;
+        });
+
+        return widgetsHTML;
+      });
+  },
 };
 
+/** Session API. */
 const SESSION_API = {
+  /**
+   * Attempts to create new session.
+   *
+   * @param data New session data
+   * @returns {Promise<string>}
+   */
   createUser(data) {
     let name = data.find(field => field.name === "name").value,
       nameCode = data.find(field => field.name === "name_code").value,
@@ -257,6 +296,13 @@ const SESSION_API = {
     return Session.createSession(name, nameCode, password, passwordConfirmation);
   },
 
+  /**
+   * Attempts to log in with given information.
+   *
+   * @param nameCode
+   * @param password
+   * @returns {Promise<string>}
+   */
   attemptLogin(nameCode, password) {
     return Session.attemptLogin(nameCode, password)
       .then(attempt => {
@@ -280,6 +326,9 @@ const SESSION_API = {
       });
   },
 
+  /**
+   * @returns {Promise<string[]>} All sessions promise
+   */
   getAllSessions() {
     return Device.getUserDataPath()
       .then(data => {
@@ -1042,6 +1091,47 @@ class Session {
           console.error("Session does not longer exist.");
           return false;  // TODO: error session does not exist.
         }
+      });
+  };
+
+  static canShowWidgetsOnLockscreen(nameCode) {
+    return Device.getUserDataPath()
+      .then(data => {
+        const DEVICE = new Device(data),
+          WIDGETS_CONFIGURATION_PATH = path.join(
+            DEVICE.getUserSystemPath(nameCode),
+            "widgets.json"
+          );
+
+        let widgetsConfiguration
+          = JSON.parse(fs.readFileSync(WIDGETS_CONFIGURATION_PATH,
+          {encoding: "utf-8"}));
+
+        return widgetsConfiguration.showOnLockscreen;
+      });
+  };
+
+  static getSessionWidgets(nameCode) {
+    return Session.canShowWidgetsOnLockscreen(nameCode)
+      .then(canShow => {
+        if (canShow) {
+          return Device.getUserDataPath()
+            .then(data => {
+              const DEVICE = new Device(data),
+                WIDGETS_CONFIGURATION_PATH = path.join(
+                  DEVICE.getUserSystemPath(nameCode),
+                  "widgets.json"
+                );
+
+              let widgetsConfiguration
+                = JSON.parse(fs.readFileSync(WIDGETS_CONFIGURATION_PATH,
+                {encoding: "utf-8"}));
+
+              return widgetsConfiguration.installed;
+            });
+        }
+
+        return [];
       });
   };
 
